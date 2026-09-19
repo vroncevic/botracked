@@ -1,0 +1,39 @@
+# ==============================================================================
+# 13_full_bench_suite.track
+# Comprehensive Elevated Bench Validation Suite (All Commands & Features)
+# ==============================================================================
+
+# 1. Establish baseline speed & verify link
+SPEED 160
+PING
+WAIT 0.5
+CLEAR_ERRORS
+WAIT 0.3
+
+# 2. Linear motion checks
+FORWARD 2.0
+WAIT 0.5
+BACKWARD 2.0
+WAIT 0.5
+
+# 3. Differential curvature turns
+TURN_LEFT 1.5
+WAIT 0.5
+TURN_RIGHT 1.5
+WAIT 0.5
+
+# 4. In-place pivot spins
+SPIN_LEFT 1.5
+WAIT 0.5
+SPIN_RIGHT 1.5
+WAIT 0.5
+
+# 5. Speed override transitions
+FORWARD 1.5 220
+WAIT 0.5
+BACKWARD 1.5 120
+WAIT 0.5
+
+# 6. Final stop and ping confirmation
+STOP
+PING

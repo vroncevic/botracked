@@ -1,0 +1,19 @@
+# ==============================================================================
+# 01_connection_ping.track
+# Link Verification & System Non-Motion Commands
+# ==============================================================================
+
+# Ping microcontroller link to verify heartbeat keepalive
+PING
+WAIT 0.5
+
+# Clear any active errors or failsafe states on the robot
+CLEAR_ERRORS
+WAIT 0.5
+
+# Re-ping to ensure link remains responsive
+PING
+WAIT 0.5
+
+# Safe stop command
+STOP

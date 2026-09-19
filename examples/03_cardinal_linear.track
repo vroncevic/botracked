@@ -1,0 +1,24 @@
+# ==============================================================================
+# 03_cardinal_linear.track
+# Linear Forward and Backward Motion with In-Line Speed Overrides
+# ==============================================================================
+
+SPEED 160
+
+# Forward drive for 2.5 seconds
+FORWARD 2.5
+WAIT 0.5
+
+# Backward drive for 2.5 seconds
+BACKWARD 2.5
+WAIT 0.5
+
+# Forward sprint with high-speed override (PWM 220)
+FORWARD 1.5 220
+WAIT 0.5
+
+# Backward crawl with low-speed override (PWM 110)
+BACKWARD 1.5 110
+WAIT 0.5
+
+STOP

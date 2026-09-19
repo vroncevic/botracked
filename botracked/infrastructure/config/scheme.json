@@ -1,0 +1,9 @@
+{
+    "default_speed": "integer",
+    "min_speed": "integer",
+    "max_speed": "integer",
+    "baud_rate": "integer",
+    "tcp_port": "integer",
+    "heartbeat_interval_ms": "integer",
+    "telemetry_poll_interval_ms": "integer"
+}

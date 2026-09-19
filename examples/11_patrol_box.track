@@ -1,0 +1,18 @@
+# ==============================================================================
+# 11_patrol_box.track
+# Square Perimeter Patrol Routine (Loop Construct)
+# ==============================================================================
+
+SPEED 175
+
+REPEAT 4:
+    # Advance straight along perimeter leg
+    FORWARD 2.5
+    WAIT 0.4
+
+    # 90-degree corner pivot
+    SPIN_RIGHT 0.85
+    WAIT 0.4
+END
+
+STOP

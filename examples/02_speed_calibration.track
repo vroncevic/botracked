@@ -1,0 +1,28 @@
+# ==============================================================================
+# 02_speed_calibration.track
+# Step-by-Step Motor PWM Speed Calibration
+# ==============================================================================
+
+# Low speed / minimum torque test (PWM 80)
+SPEED 80
+FORWARD 1.0
+WAIT 0.5
+
+# Moderate cruising speed (PWM 140)
+SPEED 140
+FORWARD 1.0
+WAIT 0.5
+
+# Standard cruising speed (PWM 180)
+SPEED 180
+FORWARD 1.0
+WAIT 0.5
+
+# High speed / maximum torque (PWM 230)
+SPEED 230
+FORWARD 1.0
+WAIT 0.5
+
+# Restore baseline standard speed and stop
+SPEED 180
+STOP

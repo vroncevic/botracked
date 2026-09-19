@@ -1,0 +1,25 @@
+# ==============================================================================
+# 06_turn_90_degree.track
+# Orthogonal 90-Degree Cornering Maneuver
+# ==============================================================================
+
+SPEED 170
+
+# Approach intersection
+FORWARD 2.0
+WAIT 0.3
+
+# Sharp 90-degree right turn using in-place pivot
+SPIN_RIGHT 0.85
+WAIT 0.3
+
+# Exit corner along new corridor
+FORWARD 2.0
+WAIT 0.3
+
+# Sharp 90-degree left turn back to original orientation
+SPIN_LEFT 0.85
+WAIT 0.3
+
+FORWARD 1.0
+STOP

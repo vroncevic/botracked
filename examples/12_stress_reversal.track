@@ -1,0 +1,24 @@
+# ==============================================================================
+# 12_stress_reversal.track
+# High-Stress Rapid Direction Reversal & Emergency Braking
+# ==============================================================================
+
+SPEED 200
+
+REPEAT 3:
+    # Forward thrust
+    FORWARD 0.8
+    # Immediate rapid reverse thrust (motor driver back-EMF test)
+    BACKWARD 0.8
+END
+
+WAIT 0.5
+
+# Rapid spin oscillation
+REPEAT 3:
+    SPIN_LEFT 0.5
+    SPIN_RIGHT 0.5
+END
+
+# Emergency halt
+STOP

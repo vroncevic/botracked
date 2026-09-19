@@ -1,0 +1,20 @@
+# ==============================================================================
+# 05_pivot_spins.track
+# Zero-Radius Pivot Counter-Rotations (Opposing Track Torques)
+# ==============================================================================
+
+SPEED 170
+
+# Spin counter-clockwise on spot (left REV, right FWD)
+SPIN_LEFT 1.5
+WAIT 0.5
+
+# Spin clockwise on spot (left FWD, right REV)
+SPIN_RIGHT 1.5
+WAIT 0.5
+
+# Fast 360-degree spin burst with speed override (PWM 220)
+SPIN_RIGHT 2.0 220
+WAIT 0.5
+
+STOP

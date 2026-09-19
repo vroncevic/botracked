@@ -1,0 +1,29 @@
+# ==============================================================================
+# 10_ramp_climb_descent.track
+# Incline Ramp Obstacle Simulation (Torque Climb, Plateau & Braked Descent)
+# ==============================================================================
+
+# 1. Approach ramp foot at standard cruise speed
+SPEED 150
+FORWARD 1.5
+WAIT 0.2
+
+# 2. Maximum torque climb: power ramp up to climb 20-30 deg incline
+FORWARD 2.5 240
+WAIT 0.3
+
+# 3. Crest the summit / plateau: reduce speed for stability
+SPEED 120
+FORWARD 1.0
+WAIT 0.5
+
+# 4. Controlled descent: low PWM power braking down the slope to prevent runaway
+FORWARD 2.5 90
+WAIT 0.3
+
+# 5. Return to flat level cruise speed
+SPEED 160
+FORWARD 1.5
+
+# Safe halt
+STOP

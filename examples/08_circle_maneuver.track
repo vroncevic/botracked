@@ -1,0 +1,21 @@
+# ==============================================================================
+# 08_circle_maneuver.track
+# Continuous Circular Loop Trajectory (Differential Curvature Arc)
+# ==============================================================================
+
+SPEED 160
+
+# Engage continuous differential turn to complete a smooth circular trajectory
+# Right track drives forward while left track pivots
+TURN_LEFT 6.0
+WAIT 0.5
+
+# Brief pause
+PING
+WAIT 0.5
+
+# Reverse direction circle (clockwise arc)
+TURN_RIGHT 6.0
+WAIT 0.5
+
+STOP

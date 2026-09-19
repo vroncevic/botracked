@@ -1,0 +1,24 @@
+# ==============================================================================
+# 04_differential_turns.track
+# Differential Radius Turns (One Track Driving, One Track Stationary)
+# ==============================================================================
+
+SPEED 160
+
+# Gentle left curvature (left motor STOP, right motor FWD)
+TURN_LEFT 1.5
+WAIT 0.5
+
+# Forward transition
+FORWARD 1.0
+WAIT 0.5
+
+# Gentle right curvature (right motor STOP, left motor FWD)
+TURN_RIGHT 1.5
+WAIT 0.5
+
+# Forward transition
+FORWARD 1.0
+WAIT 0.5
+
+STOP

@@ -1,0 +1,21 @@
+# ==============================================================================
+# 07_turnaround_180.track
+# Out-and-Back 180-Degree Pivot Turnaround
+# ==============================================================================
+
+SPEED 170
+
+# Drive forward for 3.0 seconds along patrol lane
+FORWARD 3.0
+WAIT 0.5
+
+# Complete 180-degree in-place turnaround (U-turn pivot)
+SPIN_RIGHT 1.7
+WAIT 0.5
+
+# Return along the same lane for 3.0 seconds
+FORWARD 3.0
+WAIT 0.5
+
+# Final alignment and halt
+STOP

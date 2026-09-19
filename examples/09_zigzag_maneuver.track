@@ -1,0 +1,24 @@
+# ==============================================================================
+# 09_zigzag_maneuver.track
+# Tactical Zig-Zag Path (Alternating Oblique Slalom)
+# ==============================================================================
+
+SPEED 160
+
+REPEAT 3:
+    # Diagonal leg left
+    SPIN_LEFT 0.4
+    FORWARD 1.5
+    WAIT 0.3
+
+    # Diagonal leg right
+    SPIN_RIGHT 0.8
+    FORWARD 1.5
+    WAIT 0.3
+
+    # Re-align straight
+    SPIN_LEFT 0.4
+    WAIT 0.2
+END
+
+STOP
