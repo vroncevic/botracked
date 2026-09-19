@@ -52,7 +52,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -107,17 +107,8 @@ class BotrackedGUI:
             Initializes GUI engine and mounts all subcomponents.
 
             :param bot_service: Core robot interactor service.
-            :type bot_service: BotService
-
             :param root: Optional parent Tk instance.
-            :type root: Tk | None
-
             :param config: Optional GuiConfig holding window constants.
-            :type config: GuiConfig | None
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._bot_service = bot_service
@@ -134,9 +125,6 @@ class BotrackedGUI:
         '''
             Configures root window properties, titles, and styles.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         cfg: GuiConfig = self._config
@@ -144,10 +132,10 @@ class BotrackedGUI:
 
         screen_w: int = self._root.winfo_screenwidth()
         screen_h: int = self._root.winfo_screenheight()
-        self._root.geometry(f'{screen_w}x{screen_h}+0+0')
-        self._root.minsize(screen_w, screen_h)
-        self._root.maxsize(screen_w, screen_h)
-        self._root.resizable(False, False)
+        min_w: int = min(cfg.min_width, screen_w)
+        min_h: int = min(cfg.min_height, screen_h - 60)
+        self._root.minsize(min_w, min_h)
+        self._root.resizable(True, True)
 
         try:
             self._root.attributes('-zoomed', True)
@@ -155,7 +143,7 @@ class BotrackedGUI:
             try:
                 self._root.state('zoomed')
             except Exception:
-                pass
+                self._root.geometry(f'{screen_w}x{screen_h - 60}+0+0')
 
         self._root.protocol('WM_DELETE_WINDOW', self._handle_window_close)
         StyleConfigurator.apply(Style(self._root))
@@ -171,7 +159,7 @@ class BotrackedGUI:
             on_disconnect=self._bot_service.disconnect,
         )
         self._connection_panel = ConnectionPanel(
-            parent=self._root, callbacks=conn_cb  # type: ignore[arg-type]
+            parent=self._root, callbacks=conn_cb
         )
         self._connection_panel.get_widget().pack(fill=X, side=TOP)
 
@@ -210,9 +198,10 @@ class BotrackedGUI:
             :exceptions: None.
         '''
         cfg: GuiConfig = self._config
-        self._log_panel = LogPanel(parent=self._root)  # type: ignore[arg-type]
+        self._log_panel = LogPanel(parent=self._root)
         self._log_panel.get_widget().pack(
-            fill=X, side=BOTTOM, padx=cfg.padding_row_x, pady=(0, cfg.padding_log_y_bot)
+            fill=BOTH, side=BOTTOM, expand=True, padx=cfg.padding_row_x,
+            pady=(0, cfg.padding_log_y_bot),
         )
 
         mission = self._bot_service.get_mission_runner()
@@ -223,7 +212,7 @@ class BotrackedGUI:
             on_abort=mission.abort,
         )
         self._editor_panel = DslEditorPanel(
-            parent=self._root,  # type: ignore[arg-type]
+            parent=self._root,
             dsl_service=self._dsl_service,
             callbacks=mission_cb,
         )
@@ -261,9 +250,6 @@ class BotrackedGUI:
         '''
             Callback invoked on window close event.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._bot_service.disconnect()
@@ -274,8 +260,6 @@ class BotrackedGUI:
             Checks if GUI window is ready.
 
             :return: True if ready, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         return self._is_initialized
@@ -285,11 +269,6 @@ class BotrackedGUI:
             Loads mission script text into editor panel.
 
             :param content: Script code string.
-            :type content: str
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._editor_panel.load_script(content)
@@ -298,9 +277,6 @@ class BotrackedGUI:
         '''
             Starts Tkinter event loop.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._root.mainloop()
@@ -308,9 +284,6 @@ class BotrackedGUI:
     def stop(self) -> None:
         '''
             Destroys GUI window and exits loop.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''

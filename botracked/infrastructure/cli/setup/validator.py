@@ -35,7 +35,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -58,24 +58,31 @@ class CLIBundleValidator:
             Validates the CLI bundle.
 
             :param bundle: The CLI bundle to validate.
-            :type bundle: CLIBundle
-
-            :return: None.
-            :rtype: None
-
-            :exceptions: ATSValueError, ATSTypeError.
+            :exceptions:
+                | ATSValueError: The CLI bundle must be provided and have proper values.
+                | ATSTypeError:  The CLI bundle must be an instance of CLIBundle and
+                |                its attributes must be instances of their respective types.
         '''
         ctx: str = 'cli_bundle_validator::validate(...)'
-        not_none(bundle, ctx, 'the cli bundle must be provided')
-        istype(bundle, CLIBundle, ctx, 'the cli bundle must be an instance of CLIBundle')
+        msg_bundle_none: str = 'the cli bundle must be provided'
+        msg_service_none: str = 'the service must be provided'
+        msg_parser_none: str = 'the parser must be provided'
+        msg_commands_none: str = 'the commands sequence must be provided'
+        msg_bundle_istype: str = 'the cli bundle must be an instance of CLIBundle'
+        msg_service_istype: str = 'the service must be an instance of BotService'
+        msg_parser_istype: str = 'the parser must be an instance of IOptionManager'
+        msg_commands_istype: str = 'the commands sequence must be an instance of Sequence'
 
-        not_none(bundle.service, ctx, 'the service must be provided')
-        not_none(bundle.parser, ctx, 'the parser must be provided')
-        not_none(bundle.commands, ctx, 'the commands sequence must be provided')
+        not_none(bundle, ctx, msg_bundle_none)
+        istype(bundle, CLIBundle, ctx, msg_bundle_istype)
 
-        istype(bundle.service, BotService, ctx, 'the service must be an instance of BotService')
-        istype(bundle.parser, IOptionManager, ctx, 'the parser must be an instance of IOptionManager')
-        istype(bundle.commands, Sequence, ctx, 'the commands sequence must be an instance of Sequence')
+        not_none(bundle.service, ctx, msg_service_none)
+        not_none(bundle.parser, ctx, msg_parser_none)
+        not_none(bundle.commands, ctx, msg_commands_none)
+
+        istype(bundle.service, BotService, ctx, msg_service_istype)
+        istype(bundle.parser, IOptionManager, ctx, msg_parser_istype)
+        istype(bundle.commands, Sequence, ctx, msg_commands_istype)
 
     @classmethod
     def is_valid(cls, bundle: CLIBundle) -> bool:
@@ -83,15 +90,12 @@ class CLIBundleValidator:
             Checks if the CLI bundle is valid without raising exceptions.
 
             :param bundle: The CLI bundle to check.
-            :type bundle: CLIBundle
-
             :return: True if valid, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         try:
             cls.validate(bundle)
             return True
+
         except (ATSValueError, ATSTypeError):
             return False

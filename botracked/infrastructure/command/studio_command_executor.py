@@ -27,16 +27,14 @@ from os.path import exists
 from ats_utilities.utils.reflection import to_str
 
 from botracked.core.service.bot_service import BotService
-from botracked.infrastructure.command.studio_command_definition import (
-    StudioCommandDefinition,
-)
+from botracked.infrastructure.command.studio_command_definition import StudioCommandDefinition
 from botracked.infrastructure.gui.engine import BotrackedGUI
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -61,21 +59,12 @@ class StudioCommandExecutor:
     definition: StudioCommandDefinition
     gui: BotrackedGUI
 
-    def __init__(
-        self, definition: StudioCommandDefinition, gui: BotrackedGUI
-    ) -> None:
+    def __init__(self, definition: StudioCommandDefinition, gui: BotrackedGUI) -> None:
         '''
             Initializes executor with CLI definition and GUI engine.
 
             :param definition: Metadata definition.
-            :type definition: StudioCommandDefinition
-
             :param gui: GUI presentation engine.
-            :type gui: BotrackedGUI
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self.definition = definition
@@ -89,28 +78,22 @@ class StudioCommandExecutor:
             :exceptions: None.
         '''
         script_path: object = params.get('script') or params.get('file')
+
         if script_path and isinstance(script_path, str) and exists(script_path):
             try:
                 with open(script_path, 'r', encoding='utf-8') as script_file:
                     self.gui.load_script(script_file.read())
+
             except OSError:
                 pass
 
-    def execute(
-        self, *, params: Mapping[str, object], service: BotService
-    ) -> Mapping[str, object]:
+    def execute(self, *, params: Mapping[str, object], service: BotService) -> Mapping[str, object]:
         '''
             Launches GUI window.
 
             :param params: Subcommand parameters from CLI parser.
-            :type params: Mapping[str, object]
-
             :param service: BotService core logic instance.
-            :type service: BotService
-
             :return: Execution dictionary with returncode, stdout, stderr.
-            :rtype: Mapping[str, object]
-
             :exceptions: None.
         '''
         if not self.gui.is_initialized() or not service.is_initialized():
@@ -132,6 +115,7 @@ class StudioCommandExecutor:
                 'stdout': 'botracked: studio session completed',
                 'stderr': '',
             }
+
         except Exception as exc:
             return {
                 'returncode': 1,
@@ -144,8 +128,6 @@ class StudioCommandExecutor:
             Returns definition metadata.
 
             :return: Definition instance.
-            :rtype: StudioCommandDefinition
-
             :exceptions: None.
         '''
         return self.definition
@@ -155,8 +137,6 @@ class StudioCommandExecutor:
             Returns string representation of executor.
 
             :return: String.
-            :rtype: str
-
             :exceptions: None.
         '''
         return to_str(self)

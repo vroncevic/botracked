@@ -29,7 +29,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -83,9 +83,12 @@ class TbotParser:
 
         while not self._is_at_end():
             self._skip_newlines()
+
             if self._is_at_end():
                 break
+
             stmt: AstInstruction | None = self._parse_statement()
+
             if stmt is not None:
                 instructions.append(stmt)
 
@@ -101,7 +104,9 @@ class TbotParser:
         '''
         try:
             self.parse(tokens)
+
             return True, 'Syntax valid'
+
         except ValueError as err:
             return False, str(err)
 
@@ -114,6 +119,7 @@ class TbotParser:
         '''
         if self._pos < len(self._tokens):
             return self._tokens[self._pos]
+
         return self._tokens[-1]
 
     def _advance(self) -> Token:
@@ -124,8 +130,10 @@ class TbotParser:
             :exceptions: None.
         '''
         token: Token = self._current()
+
         if not self._is_at_end():
             self._pos += 1
+
         return token
 
     def _is_at_end(self) -> bool:
@@ -151,21 +159,21 @@ class TbotParser:
             Parses SPEED parameter statement.
 
             :param line: Source line number.
-            :type line: int
-
             :return: AstInstruction for SPEED.
-            :rtype: AstInstruction
-
             :exceptions:
                 | ValueError: If speed is missing or not in range 0..255.
         '''
         speed_tok: Token = self._current()
+
         if speed_tok.token_type != TokenType.NUMBER or not isinstance(speed_tok.value, (int, float)):
             raise ValueError(f'Line {line}: SPEED expects integer value (0..255)')
+
         self._advance()
         val: int = int(speed_tok.value)
+
         if not 0 <= val <= 255:
             raise ValueError(f'Line {line}: SPEED value {val} out of range (0..255)')
+
         return AstInstruction(TokenType.SPEED, param1=val, line_number=line)
 
     def _parse_motion_statement(self, tok: Token, line: int) -> AstInstruction:
@@ -173,26 +181,31 @@ class TbotParser:
             Parses motion statement with optional duration and speed override.
 
             :param tok: Motion token (e.g. FORWARD, BACKWARD).
-            :type tok: Token
-
             :param line: Source line number.
-            :type line: int
-
             :return: AstInstruction for motion command.
-            :rtype: AstInstruction
-
             :exceptions:
                 | ValueError: If speed override is outside range 0..255.
         '''
         dur: float | None = None
         spd: int | None = None
-        if self._current().token_type == TokenType.NUMBER and isinstance(self._current().value, (int, float)):
-            dur = float(self._advance().value)  # type: ignore[arg-type]
-            if self._current().token_type == TokenType.NUMBER and isinstance(self._current().value, (int, float)):
-                spd_val: int = int(self._advance().value)  # type: ignore[arg-type]
-                if not 0 <= spd_val <= 255:
-                    raise ValueError(f'Line {line}: speed override {spd_val} out of range (0..255)')
-                spd = spd_val
+
+        if self._current().token_type == TokenType.NUMBER:
+            tok_dur = self._advance()
+
+            if isinstance(tok_dur.value, (int, float, str)):
+                dur = float(tok_dur.value)
+
+            if self._current().token_type == TokenType.NUMBER:
+                tok_spd = self._advance()
+
+                if isinstance(tok_spd.value, (int, float, str)):
+                    spd_val: int = int(tok_spd.value)
+
+                    if not 0 <= spd_val <= 255:
+                        raise ValueError(f'Line {line}: speed override {spd_val} out of range (0..255)')
+
+                    spd = spd_val
+
         return AstInstruction(tok.token_type, param1=dur, param2=spd, line_number=line)
 
     def _parse_wait_statement(self, line: int) -> AstInstruction:
@@ -200,18 +213,17 @@ class TbotParser:
             Parses WAIT duration statement.
 
             :param line: Source line number.
-            :type line: int
-
             :return: AstInstruction for WAIT command.
-            :rtype: AstInstruction
-
             :exceptions:
                 | ValueError: If duration is missing or non-numerical.
         '''
         dur_tok: Token = self._current()
+
         if dur_tok.token_type != TokenType.NUMBER or not isinstance(dur_tok.value, (int, float)):
             raise ValueError(f'Line {line}: WAIT expects duration in seconds')
+
         self._advance()
+
         return AstInstruction(TokenType.WAIT, param1=float(dur_tok.value), line_number=line)
 
     def _parse_repeat_statement(self, line: int) -> AstInstruction:
@@ -219,32 +231,39 @@ class TbotParser:
             Parses REPEAT loop block statement.
 
             :param line: Source line number.
-            :type line: int
-
             :return: AstInstruction for REPEAT block with children.
-            :rtype: AstInstruction
-
             :exceptions:
                 | ValueError: If count is missing or block is unclosed.
         '''
         count_tok: Token = self._current()
+
         if count_tok.token_type != TokenType.NUMBER or not isinstance(count_tok.value, (int, float)):
             raise ValueError(f'Line {line}: REPEAT expects loop count integer')
+
         self._advance()
         count: int = int(count_tok.value)
+
         if self._current().token_type == TokenType.COLON:
             self._advance()
+
         children: list[AstInstruction] = []
+
         while not self._is_at_end():
             self._skip_newlines()
+
             if self._is_at_end() or self._current().token_type == TokenType.END:
                 break
+
             child: AstInstruction | None = self._parse_statement()
+
             if child is not None:
                 children.append(child)
+
         if self._current().token_type != TokenType.END:
             raise ValueError(f'Line {line}: REPEAT block unclosed, missing END')
+
         self._advance()
+
         return AstInstruction(
             TokenType.REPEAT, param1=count, line_number=line, children=tuple(children)
         )
@@ -254,8 +273,6 @@ class TbotParser:
             Parses a single AST instruction statement.
 
             :return: Parsed AstInstruction or None if empty line.
-            :rtype: AstInstruction | None
-
             :exceptions:
                 | ValueError: On unrecognized or malformed syntax.
         '''

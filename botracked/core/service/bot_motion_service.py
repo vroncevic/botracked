@@ -26,21 +26,15 @@ from collections.abc import Callable
 from botracked.core.model.dsl.compiled_step import CompiledStep
 from botracked.core.model.motion_command import MotionCommand
 from botracked.core.model.protocol_opcode import ProtocolOpcode
-from botracked.infrastructure.communication.binary_codec import (
-    BinaryCodec,
-)
-from botracked.infrastructure.communication.serial_transport import (
-    SerialTransport,
-)
-from botracked.infrastructure.communication.tcp_transport import (
-    TcpTransport,
-)
+from botracked.infrastructure.communication.binary_codec import BinaryCodec
+from botracked.infrastructure.communication.serial_transport import SerialTransport
+from botracked.infrastructure.communication.tcp_transport import TcpTransport
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -100,11 +94,15 @@ class BotMotionService:
             :exceptions: None.
         '''
         transport = self._transport_provider()
+
         if transport is None or not transport.is_connected():
             return False
+
         sent = transport.send(payload)
+
         if sent:
             self._on_tx('TX', frame_name, payload)
+
         return sent
 
     def send_motion(self, cmd: MotionCommand) -> bool:
@@ -118,6 +116,7 @@ class BotMotionService:
         frame = self._codec.encode_frame(
             ProtocolOpcode.CMD_MOTION, bytes([cmd.value])
         )
+
         return self._send_bytes(frame, f'CMD_MOTION({cmd.name})')
 
     def set_speed(self, pwm: int) -> bool:
@@ -132,6 +131,7 @@ class BotMotionService:
         frame = self._codec.encode_frame(
             ProtocolOpcode.CMD_SET_SPEED, bytes([clamped_pwm])
         )
+
         return self._send_bytes(frame, f'CMD_SET_SPEED({pwm})')
 
     def stop_motors(self) -> bool:
@@ -142,6 +142,7 @@ class BotMotionService:
             :exceptions: None.
         '''
         frame = self._codec.encode_frame(ProtocolOpcode.CMD_STOP)
+
         return self._send_bytes(frame, 'CMD_STOP')
 
     def ping(self) -> bool:
@@ -152,6 +153,7 @@ class BotMotionService:
             :exceptions: None.
         '''
         frame = self._codec.encode_frame(ProtocolOpcode.CMD_PING)
+
         return self._send_bytes(frame, 'CMD_PING')
 
     def clear_errors(self) -> bool:
@@ -162,6 +164,7 @@ class BotMotionService:
             :exceptions: None.
         '''
         frame = self._codec.encode_frame(ProtocolOpcode.CMD_ERR_CLEAR)
+
         return self._send_bytes(frame, 'CMD_ERR_CLEAR')
 
     def execute_step(self, step: CompiledStep) -> bool:
@@ -173,8 +176,11 @@ class BotMotionService:
             :exceptions: None.
         '''
         success: bool = True
+
         for frame in step.frames:
             desc: str = f'STEP L{step.line_number}: {step.description}'
+
             if not self._send_bytes(frame, desc):
                 success = False
+
         return success

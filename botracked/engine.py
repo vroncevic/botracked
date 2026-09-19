@@ -37,7 +37,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -60,7 +60,7 @@ class Botracked(Base):
     '''
 
     _is_initialized: bool
-    _logger: ILogger | None
+    _logger: ILogger
     _cli: ICLI
 
     def __init__(self, bundle: BotrackedBundle) -> None:
@@ -68,21 +68,23 @@ class Botracked(Base):
             Initializes the botracked engine with adapters and services.
 
             :param bundle: BotrackedBundle containing adapters and services.
-            :type bundle: BotrackedBundle
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._is_initialized = False
-        self._logger = None
 
         try:
             BotrackedBundleValidator.validate(bundle)
+
+            # Initialize base engine
             super().__init__(bundle.base)
 
+            # Mark as not initialized (waiting for other components to be initialized)
+            self._is_initialized = False
+
+            # Setting up primary inbound adapter (CLI interface)
             self._cli = bundle.cli
+
+            # Mark as initialized (all components initialized)
             self._is_initialized = all(
                 component.is_initialized()
                 for component in [
@@ -94,69 +96,47 @@ class Botracked(Base):
                 if component
             )
 
+            # Setting up logger for tool engine
             self._logger = self.get_context().logger
             self._logger.write_log(INFO, '✅ botracked: engine initialized successfully!')
 
         except (ATSValueError, ATSTypeError) as exc:
             stdout.write(f'❌ botracked: {exc}!\n')
+
         except Exception as exc:
             stdout.write(f'❌ botracked unexpected exception: {exc}!\n')
-
-    def is_initialized(self) -> bool:
-        '''
-            Checks if engine is initialized.
-
-            :return: True if ready, False otherwise.
-            :rtype: bool
-
-            :exceptions: None.
-        '''
-        return self._is_initialized
 
     def process(self, verbose: bool = False) -> bool:
         '''
             Processes botracked CLI or GUI operations.
 
             :param verbose: Enable verbose output.
-            :type verbose: bool
-
             :return: True if successful, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         try:
-            if self.is_initialized() and self._logger is not None:
-                if verbose:
-                    self._logger.write_log(INFO, '🔍 Verbose mode enabled')
-                self._logger.write_log(INFO, '🔥 Starting botracked execution...')
-                result: Mapping[str, object] = self._cli.run()
-                self._logger.write_log(INFO, '✅ Execution finished!')
-
-                if result.get('returncode') != 0:
-                    self._logger.write_log(
-                        ERROR, f'❌ botracked: {result.get("stderr") or "failed!"}'
-                    )
-                    return False
-
-                self._logger.write_log(INFO, '✅ botracked: done!')
-                return True
-
-            if self._logger is not None:
+            if not self.is_initialized():
                 self._logger.write_log(ERROR, '❌ botracked: engine not initialized!')
-            else:
-                stdout.write('❌ botracked: engine not initialized!\n')
-            return False
+                return False
+
+            if verbose:
+                self._logger.write_log(INFO, '🔍 Verbose mode enabled')
+
+            self._logger.write_log(INFO, '🔥 Starting botracked execution...')
+            result: Mapping[str, object] = self._cli.run()
+            self._logger.write_log(INFO, '✅ Execution finished!')
+
+            if result.get('returncode') != 0:
+                self._logger.write_log(ERROR, f'❌ botracked: {result.get("stderr") or "failed!"}')
+                return False
+
+            self._logger.write_log(INFO, '✅ botracked: done!')
+            return True
 
         except (ATSValueError, ATSTypeError) as exc:
-            if self._logger is not None:
-                self._logger.write_log(ERROR, f'❌ botracked: {exc}!')
-            else:
-                stdout.write(f'❌ botracked: {exc}!\n')
+            self._logger.write_log(ERROR, f'❌ botracked: {exc}!')
             return False
+
         except Exception as exc:
-            if self._logger is not None:
-                self._logger.write_log(ERROR, f'❌ botracked unexpected exception: {exc}!')
-            else:
-                stdout.write(f'❌ botracked unexpected exception: {exc}!\n')
+            self._logger.write_log(ERROR, f'❌ botracked unexpected exception: {exc}!')
             return False

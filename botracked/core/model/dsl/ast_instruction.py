@@ -29,7 +29,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -90,9 +90,13 @@ class AstInstruction:
             :exceptions: None.
         '''
         params: list[str] = []
+
         if self.param1 is not None:
             params.append(str(self.param1))
+
         if self.param2 is not None:
             params.append(str(self.param2))
+
         args: str = f" ({', '.join(params)})" if params else ''
+
         return f'{self.token_type.name}{args} [L{self.line_number}]'

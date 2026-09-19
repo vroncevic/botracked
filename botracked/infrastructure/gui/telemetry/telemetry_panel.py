@@ -34,7 +34,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -83,14 +83,7 @@ class TelemetryPanel:
             Initializes telemetry dashboard cards.
 
             :param parent: Parent Tk widget.
-            :type parent: Frame
-
             :param config: Optional panel configuration instance.
-            :type config: TelemetryPanelConfig | None
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._config = config if config is not None else TelemetryPanelConfig()
@@ -104,8 +97,6 @@ class TelemetryPanel:
             Returns root Frame widget.
 
             :return: Frame instance.
-            :rtype: Frame
-
             :exceptions: None.
         '''
         return self._frame
@@ -113,9 +104,6 @@ class TelemetryPanel:
     def reset_telemetry(self) -> None:
         '''
             Resets all displayed telemetry values to default offline state.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''
@@ -134,11 +122,6 @@ class TelemetryPanel:
             Updates displayed card metrics from TelemetryData snapshot.
 
             :param data: TelemetryData instance.
-            :type data: TelemetryData
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         mode_str: str = data.mode_str
@@ -232,20 +215,10 @@ class TelemetryPanel:
             Helper for building an individual metric card.
 
             :param parent: Parent Frame widget.
-            :type parent: Frame
-
             :param spec: Metric specification containing title, variable, color.
-            :type spec: tuple[str, StringVar, str]
-
             :param pos: Grid row and column tuple (row, col).
-            :type pos: tuple[int, int]
-
             :param colspan: Optional column span.
-            :type colspan: int
-
             :return: Configured value Label widget.
-            :rtype: Label
-
             :exceptions: None.
         '''
         title, var, fg = spec

@@ -35,7 +35,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -58,26 +58,35 @@ class BotrackedBundleValidator:
             Validates the botracked bundle instance.
 
             :param bundle: The bundle to validate.
-            :type bundle: BotrackedBundle
-
-            :return: None.
-            :rtype: None
-
-            :exceptions: ATSValueError, ATSTypeError.
+            :exceptions:
+                | ATSValueError: The botracked bundle must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
+                |                its attributes must be instances of their respective types.
         '''
         ctx: str = 'botracked_bundle_validator::validate(...)'
-        not_none(bundle, ctx, 'the botracked bundle must be provided')
-        istype(bundle, BotrackedBundle, ctx, 'the botracked bundle must be an instance of BotrackedBundle')
+        msg_bundle_none: str = 'the botracked bundle must be provided'
+        msg_base_none: str = 'the base bundle must be provided'
+        msg_service_none: str = 'the service must be provided'
+        msg_gui_none: str = 'the gui must be provided'
+        msg_cli_none: str = 'the cli must be provided'
+        msg_bundle_istype: str = 'the botracked bundle must be an instance of BotrackedBundle'
+        msg_base_istype: str = 'the base bundle must be an instance of BaseBundle'
+        msg_service_istype: str = 'the service must be an instance of IBotService'
+        msg_gui_istype: str = 'the gui must be an instance of IGUI'
+        msg_cli_istype: str = 'the cli must be an instance of ICLI'
 
-        not_none(bundle.base, ctx, 'the base bundle must be provided')
-        not_none(bundle.service, ctx, 'the service must be provided')
-        not_none(bundle.gui, ctx, 'the gui must be provided')
-        not_none(bundle.cli, ctx, 'the cli must be provided')
+        not_none(bundle, ctx, msg_bundle_none)
+        istype(bundle, BotrackedBundle, ctx, msg_bundle_istype)
 
-        istype(bundle.base, BaseBundle, ctx, 'the base bundle must be an instance of BaseBundle')
-        istype(bundle.service, IBotService, ctx, 'the service must be an instance of IBotService')
-        istype(bundle.gui, IGUI, ctx, 'the gui must be an instance of IGUI')
-        istype(bundle.cli, ICLI, ctx, 'the cli must be an instance of ICLI')
+        not_none(bundle.base, ctx, msg_base_none)
+        not_none(bundle.service, ctx, msg_service_none)
+        not_none(bundle.gui, ctx, msg_gui_none)
+        not_none(bundle.cli, ctx, msg_cli_none)
+
+        istype(bundle.base, BaseBundle, ctx, msg_base_istype)
+        istype(bundle.service, IBotService, ctx, msg_service_istype)
+        istype(bundle.gui, IGUI, ctx, msg_gui_istype)
+        istype(bundle.cli, ICLI, ctx, msg_cli_istype)
 
     @classmethod
     def is_valid(cls, bundle: BotrackedBundle) -> bool:
@@ -85,15 +94,12 @@ class BotrackedBundleValidator:
             Checks if bundle is valid without throwing exceptions.
 
             :param bundle: The bundle to check.
-            :type bundle: BotrackedBundle
-
             :return: True if valid, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         try:
             cls.validate(bundle)
             return True
+
         except (ATSValueError, ATSTypeError):
             return False

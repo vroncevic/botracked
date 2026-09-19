@@ -22,7 +22,7 @@ Info
 from __future__ import annotations
 
 from os.path import exists
-from tkinter import LEFT, StringVar
+from tkinter import LEFT, StringVar, Tk
 from tkinter.ttk import Button, Combobox, Frame, Label
 
 from botracked.core.model.connection_params import ConnectionParams
@@ -44,7 +44,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -92,7 +92,7 @@ class ConnectionPanel:
 
     def __init__(
         self,
-        parent: Frame,
+        parent: Tk | Frame,
         callbacks: ConnectionCallbacks,
         preferences_repo: ConnectionPreferencesRepository | None = None,
         config: ConnectionPanelConfig | None = None,

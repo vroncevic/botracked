@@ -25,20 +25,21 @@ from ats_utilities.option.imanager import IOptionManager
 
 from botracked.core.service.bot_service import BotService
 from botracked.infrastructure.cli.setup.bundle import CLIBundle
+from botracked.infrastructure.cli.setup.dependencies import CLIBundleDependencies
+from botracked.infrastructure.cli.setup.keys import CLIBundleKeys
+from botracked.infrastructure.cli.setup.opt_validator import CLIBundleOptionsValidator
+from botracked.infrastructure.cli.setup.options import CLIBundleOptions
+from botracked.infrastructure.cli.setup.registry import CLIBundleRegistry
 from botracked.infrastructure.command.command import CommandBundle
-from botracked.infrastructure.command.studio_command_definition import (
-    StudioCommandDefinition,
-)
-from botracked.infrastructure.command.studio_command_executor import (
-    StudioCommandExecutor,
-)
+from botracked.infrastructure.command.studio_command_definition import StudioCommandDefinition
+from botracked.infrastructure.command.studio_command_executor import StudioCommandExecutor
 from botracked.infrastructure.gui.engine import BotrackedGUI
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -56,35 +57,42 @@ class CLIBundleFactory:
     '''
 
     @classmethod
-    def create_bundle(
-        cls, service: BotService, gui: BotrackedGUI, parser: IOptionManager
-    ) -> CLIBundle:
+    def create_bundle(cls, options: CLIBundleOptions) -> CLIBundle:
         '''
-            Creates the CLI bundle.
+            Creates the CLI bundle with configured options.
 
-            :param service: BotService domain interactor.
-            :type service: BotService
-
-            :param gui: BotrackedGUI presentation adapter.
-            :type gui: BotrackedGUI
-
-            :param parser: OptionManager instance.
-            :type parser: IOptionManager
-
-            :return: Initialized CLIBundle.
-            :rtype: CLIBundle
-
-            :exceptions: None.
+            :param options: The CLI bundle options.
+            :return: The assembled CLIBundle instance.
+            :exceptions:
+                | ATSValueError: The cli bundle options must be provided and have proper values.
+                | ATSTypeError:  The cli bundle options must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
+                | ATSValueError: The cli bundle dependencies must be provided and have proper values.
+                | ATSTypeError:  The cli bundle dependencies must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
+                | ATSValueError: The cli bundle must be provided and have proper values.
+                | ATSTypeError:  The cli bundle must be an instance of CLIBundle and
+                |                its attributes must be instances of their respective types.
         '''
-        studio_def = StudioCommandDefinition()
-        studio_exec = StudioCommandExecutor(studio_def, gui)
-        cmd_bundle = CommandBundle(definition=studio_def, executor=studio_exec)
+        CLIBundleOptionsValidator.validate(options)
 
-        return CLIBundle(
-            service=service,
-            parser=parser,
-            commands=[cmd_bundle],
+        service: BotService = options[CLIBundleKeys.OPTION_SERVICE]
+        gui: BotrackedGUI = options[CLIBundleKeys.OPTION_GUI]
+        parser: IOptionManager = options[CLIBundleKeys.OPTION_PARSER]
+
+        studio_def: StudioCommandDefinition = StudioCommandDefinition()
+        studio_exec: StudioCommandExecutor = StudioCommandExecutor(studio_def, gui)
+        cmd_bundle: CommandBundle = CommandBundle(
+            definition=studio_def, executor=studio_exec
         )
+
+        dependencies: CLIBundleDependencies = {
+            CLIBundleKeys.DEPENDENCY_SERVICE: service,
+            CLIBundleKeys.DEPENDENCY_PARSER: parser,
+            CLIBundleKeys.DEPENDENCY_COMMANDS: [cmd_bundle],
+        }
+
+        return CLIBundleRegistry.create_bundle(dependencies)
 
     @classmethod
     def get_version(cls) -> str:
@@ -92,8 +100,6 @@ class CLIBundleFactory:
             Returns factory version.
 
             :return: Version string.
-            :rtype: str
-
             :exceptions: None.
         '''
         return __version__
