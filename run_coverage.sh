@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # @brief   botracked
-# @version 1.0.0
+# @version 1.0.1
 # @date    Fri Sep 18 16:30:00 2026
 # @company None, free software to use 2026
 # @author  Vladimir Roncevic <elektron.ronca@gmail.com>

@@ -22,7 +22,7 @@ Info
 from __future__ import annotations
 
 from datetime import datetime
-from tkinter import BOTH, END, LEFT, RIGHT, X, Scrollbar, Text
+from tkinter import BOTH, END, LEFT, RIGHT, X, Scrollbar, Text, Tk
 from tkinter.ttk import Button, Frame, Label
 
 from botracked.infrastructure.gui.stream.log_panel_config import LogPanelConfig
@@ -32,7 +32,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -63,20 +63,13 @@ class LogPanel:
     _text: Text
 
     def __init__(
-        self, parent: Frame, config: LogPanelConfig | None = None
+        self, parent: Tk | Frame, config: LogPanelConfig | None = None
     ) -> None:
         '''
             Initializes communication log viewer.
 
             :param parent: Parent Tk widget.
-            :type parent: Frame
-
             :param config: Optional log panel configuration instance.
-            :type config: LogPanelConfig | None
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._config = config if config is not None else LogPanelConfig()
@@ -90,8 +83,6 @@ class LogPanel:
             Returns root Frame widget.
 
             :return: Frame instance.
-            :rtype: Frame
-
             :exceptions: None.
         '''
         return self._frame
@@ -99,9 +90,6 @@ class LogPanel:
     def _build_ui(self) -> None:
         '''
             Constructs toolbar buttons and scrolling text area.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''
@@ -162,17 +150,8 @@ class LogPanel:
             Appends packet trace line into the log widget.
 
             :param direction: Direction string ('TX' or 'RX').
-            :type direction: str
-
             :param opcode_name: Opcode mnemonic label.
-            :type opcode_name: str
-
             :param raw_hex: Hex string representation of wire bytes.
-            :type raw_hex: str
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         ts: str = datetime.now().strftime(self._config.time_format)[:-3]
@@ -190,9 +169,6 @@ class LogPanel:
         '''
             Selects all text content in the packet stream console.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._text.tag_add('sel', '1.0', 'end')
@@ -200,9 +176,6 @@ class LogPanel:
     def copy_to_clipboard(self) -> None:
         '''
             Copies current selected text or all logged content to system clipboard.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''
@@ -216,9 +189,6 @@ class LogPanel:
     def clear(self) -> None:
         '''
             Clears the packet log console.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''

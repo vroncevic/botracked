@@ -25,21 +25,15 @@ from collections.abc import Callable
 
 from botracked.core.model.protocol_opcode import ProtocolOpcode
 from botracked.core.model.telemetry_data import TelemetryData
-from botracked.infrastructure.communication.binary_codec import (
-    BinaryCodec,
-)
-from botracked.infrastructure.communication.serial_transport import (
-    SerialTransport,
-)
-from botracked.infrastructure.communication.tcp_transport import (
-    TcpTransport,
-)
+from botracked.infrastructure.communication.binary_codec import BinaryCodec
+from botracked.infrastructure.communication.serial_transport import SerialTransport
+from botracked.infrastructure.communication.tcp_transport import TcpTransport
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -148,6 +142,7 @@ class BotTelemetryService:
             :exceptions: None.
         '''
         hex_str: str = raw.hex().upper() if isinstance(raw, bytes) else str(raw)
+
         for observer in list(self._observers):
             if hasattr(observer, 'on_packet_logged'):
                 getattr(observer, 'on_packet_logged')(tx_rx, name, hex_str)
@@ -162,12 +157,16 @@ class BotTelemetryService:
             :exceptions: None.
         '''
         transport = self._transport_provider()
+
         if transport is None or not transport.is_connected():
             return False
+
         frame = self._codec.encode_frame(ProtocolOpcode.CMD_GET_STATUS)
         sent = transport.send(frame)
+
         if sent:
             self.notify_packet('TX', 'CMD_GET_STATUS', frame)
+
         return sent
 
     def get_telemetry(self) -> TelemetryData:

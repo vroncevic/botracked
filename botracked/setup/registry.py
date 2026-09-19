@@ -36,7 +36,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -60,12 +60,14 @@ class BotrackedBundleRegistry:
             Creates the botracked bundle from validated dependencies.
 
             :param dependencies: The botracked bundle dependencies.
-            :type dependencies: BotrackedBundleDependencies
-
             :return: The assembled BotrackedBundle.
-            :rtype: BotrackedBundle
-
-            :exceptions: None.
+            :exceptions:
+                | ATSValueError: The botracked bundle dependencies must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle dependencies must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
+                | ATSValueError: The botracked bundle must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
+                |                its attributes must be instances of their respective types.
         '''
         BotrackedBundleDependenciesValidator.validate(dependencies)
 
@@ -80,7 +82,9 @@ class BotrackedBundleRegistry:
             gui=gui,
             cli=cli,
         )
+
         BotrackedBundleValidator.validate(bundle)
+
         return bundle
 
     @classmethod
@@ -89,8 +93,6 @@ class BotrackedBundleRegistry:
             Returns the registry version.
 
             :return: Version string.
-            :rtype: str
-
             :exceptions: None.
         '''
         return __version__

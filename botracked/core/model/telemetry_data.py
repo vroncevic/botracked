@@ -30,7 +30,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -167,23 +167,28 @@ class TelemetryData:
 
         try:
             motion: MotionCommand = MotionCommand(cmd_val)
+
         except ValueError:
             motion = MotionCommand.STOP
 
         left_state: str = 'STOP'
         right_state: str = 'STOP'
-        if motion == MotionCommand.FORWARD:
-            left_state, right_state = 'FWD', 'FWD'
-        elif motion == MotionCommand.BACKWARD:
-            left_state, right_state = 'REV', 'REV'
-        elif motion == MotionCommand.TURN_LEFT:
-            left_state, right_state = 'STOP', 'FWD'
-        elif motion == MotionCommand.TURN_RIGHT:
-            left_state, right_state = 'FWD', 'STOP'
-        elif motion == MotionCommand.SPIN_LEFT:
-            left_state, right_state = 'REV', 'FWD'
-        elif motion == MotionCommand.SPIN_RIGHT:
-            left_state, right_state = 'FWD', 'REV'
+
+        match motion:
+            case MotionCommand.FORWARD:
+                left_state, right_state = 'FWD', 'FWD'
+            case MotionCommand.BACKWARD:
+                left_state, right_state = 'REV', 'REV'
+            case MotionCommand.TURN_LEFT:
+                left_state, right_state = 'STOP', 'FWD'
+            case MotionCommand.TURN_RIGHT:
+                left_state, right_state = 'FWD', 'STOP'
+            case MotionCommand.SPIN_LEFT:
+                left_state, right_state = 'REV', 'FWD'
+            case MotionCommand.SPIN_RIGHT:
+                left_state, right_state = 'FWD', 'REV'
+            case _:
+                left_state, right_state = 'STOP', 'STOP'
 
         return cls(
             system_mode=mode_str,

@@ -166,8 +166,14 @@ Tool structure
          │   │   ├── __init__.py
          │   │   └── setup/
          │   │       ├── bundle.py
+         │   │       ├── dep_validator.py
+         │   │       ├── dependencies.py
          │   │       ├── factory.py
          │   │       ├── __init__.py
+         │   │       ├── keys.py
+         │   │       ├── opt_validator.py
+         │   │       ├── options.py
+         │   │       ├── registry.py
          │   │       └── validator.py
          │   ├── command/
          │   │   ├── command.py
@@ -239,7 +245,7 @@ Tool structure
              ├── registry.py
              └── validator.py
 
-     22 directories, 101 files
+     22 directories, 107 files
 
 ✨ Features
 -----------

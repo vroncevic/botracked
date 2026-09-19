@@ -32,7 +32,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -88,6 +88,7 @@ class TbotCompiler:
         '''
         steps: list[CompiledStep] = []
         self._compile_nodes(ast, steps)
+
         return steps
 
     def estimate_duration(self, ast: list[AstInstruction]) -> float:
@@ -99,6 +100,7 @@ class TbotCompiler:
             :exceptions: None.
         '''
         steps: list[CompiledStep] = self.compile(ast)
+
         return sum(step.duration_sec for step in steps)
 
     def _compile_nodes(
@@ -147,8 +149,10 @@ class TbotCompiler:
 
                 auto_stop: bool = dur > 0.0
                 desc: str = f'{node.token_type.name}'
+
                 if dur > 0.0:
                     desc += f' for {dur:.1f}s'
+
                 if spd_override is not None:
                     desc += f' @ speed {spd_override}'
 
@@ -202,5 +206,6 @@ class TbotCompiler:
 
             elif node.token_type == TokenType.REPEAT:
                 count: int = int(node.param1) if node.param1 is not None else 1
+
                 for _ in range(count):
                     self._compile_nodes(node.children, steps)

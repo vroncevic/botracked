@@ -31,7 +31,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -121,8 +121,10 @@ class MissionRunner:
             :exceptions: None.
         '''
         self._stop_event.set()
+
         if self._thread is not None and self._thread.is_alive():
             self._thread.join(timeout=0.2)
+
         self._thread = None
         self._stop_fn()
 
@@ -140,14 +142,14 @@ class MissionRunner:
             Blocks execution while paused until resumed or stopped.
 
             :return: True if resumed, False if stopped.
-            :rtype: bool
-
             :exceptions: None.
         '''
         while self._pause_event.is_set():
             if self._stop_event.is_set():
                 return False
+
             sleep(0.05)
+
         return not self._stop_event.is_set()
 
     def _sleep_step_duration(self, step: CompiledStep) -> None:
@@ -155,21 +157,20 @@ class MissionRunner:
             Dwells for step duration while handling pause and stop interruptions.
 
             :param step: Active compiled step.
-            :type step: CompiledStep
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         elapsed: float = 0.0
+
         while elapsed < step.duration_sec:
             if self._stop_event.is_set():
                 break
+
             if self._pause_event.is_set():
                 if not self._wait_while_paused():
                     break
+
                 self._execute_fn(step)
+
             sleep(0.05)
             elapsed += 0.05
 
@@ -178,22 +179,22 @@ class MissionRunner:
             Worker thread loop executing steps with pause and stop handling.
 
             :param steps: Ordered list of compiled mission steps.
-            :type steps: list[CompiledStep]
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         for step in steps:
             if self._stop_event.is_set():
                 break
+
             if not self._wait_while_paused():
                 break
+
             self._execute_fn(step)
+
             if step.duration_sec > 0:
                 self._sleep_step_duration(step)
+
             if step.auto_stop_after and not self._stop_event.is_set():
                 self._stop_fn()
+
         if not self._stop_event.is_set():
             self._stop_fn()

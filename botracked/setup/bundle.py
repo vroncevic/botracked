@@ -35,7 +35,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -67,8 +67,6 @@ class BotrackedBundle:
             Converts the bundle to a dictionary representation.
 
             :return: Dictionary representation of bundle.
-            :rtype: Mapping[str, object]
-
             :exceptions: None.
         '''
         return instance_to_dict(self)

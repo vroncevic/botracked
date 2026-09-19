@@ -25,25 +25,17 @@ from botracked.core.model.connection_params import ConnectionParams
 from botracked.core.model.telemetry_data import TelemetryData
 from botracked.core.service.bot_motion_service import BotMotionService
 from botracked.core.service.bot_telemetry_service import BotTelemetryService
-from botracked.infrastructure.communication.binary_codec import (
-    BinaryCodec,
-)
-from botracked.core.service.telemetry_poller import (
-    TelemetryPoller,
-)
+from botracked.infrastructure.communication.binary_codec import BinaryCodec
+from botracked.core.service.telemetry_poller import TelemetryPoller
 from botracked.core.service.mission_runner import MissionRunner
-from botracked.infrastructure.communication.serial_transport import (
-    SerialTransport,
-)
-from botracked.infrastructure.communication.tcp_transport import (
-    TcpTransport,
-)
+from botracked.infrastructure.communication.serial_transport import SerialTransport
+from botracked.infrastructure.communication.tcp_transport import TcpTransport
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -154,12 +146,14 @@ class BotService:
             :exceptions: None.
         '''
         self.disconnect()
+
         if params.is_serial:
             self._active_transport = self._serial_transport
         else:
             self._active_transport = self._tcp_transport
 
         connected = self._active_transport.connect(params)
+
         if connected:
             self._poller.start(self._active_transport)
             self._telemetry_service.notify_connection_state(True, 'Connected')
@@ -167,6 +161,7 @@ class BotService:
             self._telemetry_service.notify_connection_state(
                 False, 'Connection failed'
             )
+
         return connected
 
     def disconnect(self) -> None:
@@ -177,9 +172,11 @@ class BotService:
         '''
         self._poller.stop()
         self._mission_runner.abort()
+
         if self._active_transport is not None:
             self._active_transport.disconnect()
             self._active_transport = None
+
         self._telemetry_service.notify_connection_state(False, 'Disconnected')
 
     def is_connected(self) -> bool:

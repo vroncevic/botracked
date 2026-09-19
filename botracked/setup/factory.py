@@ -33,6 +33,7 @@ from botracked.core.service.bot_service import BotService
 from botracked.infrastructure.cli.engine import CLI
 from botracked.infrastructure.cli.setup.bundle import CLIBundle
 from botracked.infrastructure.cli.setup.factory import CLIBundleFactory
+from botracked.infrastructure.cli.setup.options import CLIBundleOptions
 from botracked.infrastructure.gui.engine import BotrackedGUI
 from botracked.setup.bundle import BotrackedBundle
 from botracked.setup.dependencies import BotrackedBundleDependencies
@@ -45,7 +46,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -64,25 +65,25 @@ class BotrackedBundleFactory:
                 | get_version - Returns factory version string.
     '''
 
-    _info_file: str = join(
-        dirname(dirname(abspath(__file__))),
-        'infrastructure', 'config', 'botracked.cfg',
-    )
+    _info_file: str = join(dirname(dirname(abspath(__file__))), 'infrastructure', 'config', 'botracked.cfg',)
 
     @classmethod
-    def create_bundle(
-        cls, options: BotrackedBundleOptions | None = None
-    ) -> BotrackedBundle:
+    def create_bundle(cls, options: BotrackedBundleOptions | None = None) -> BotrackedBundle:
         '''
             Constructs and wires all application components.
 
             :param options: Optional pre-configured bundle options.
-            :type options: BotrackedBundleOptions | None
-
             :return: Fully wired BotrackedBundle instance.
-            :rtype: BotrackedBundle
-
-            :exceptions: None.
+            :exceptions:
+                | ATSValueError: The botracked bundle options must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle options must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
+                | ATSValueError: The botracked bundle dependencies must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle dependencies must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
+                | ATSValueError: The botracked bundle must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
+                |                its attributes must be instances of their respective types.
         '''
         if options is not None:
             BotrackedBundleOptionsValidator.validate(options)
@@ -106,9 +107,11 @@ class BotrackedBundleFactory:
         gui: BotrackedGUI = BotrackedGUI(bot_service=service)
 
         cli_bundle: CLIBundle = CLIBundleFactory.create_bundle(
-            service=service,
-            gui=gui,
-            parser=base_bundle.option_manager,
+            CLIBundleOptions(
+                service=service,
+                gui=gui,
+                parser=base_bundle.option_manager,
+            )
         )
         cli: CLI = CLI(cli_bundle)
 
@@ -127,8 +130,6 @@ class BotrackedBundleFactory:
             Returns factory version.
 
             :return: Version string.
-            :rtype: str
-
             :exceptions: None.
         '''
         return __version__

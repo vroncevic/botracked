@@ -32,7 +32,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -68,11 +68,6 @@ class DslSyntaxHighlighter:
             Initializes highlighter and compiles regex patterns.
 
             :param config: Optional highlighter configuration instance.
-            :type config: DslSyntaxHighlighterConfig | None
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._config = (
@@ -87,11 +82,6 @@ class DslSyntaxHighlighter:
             Configures syntax highlight tags on Text widget.
 
             :param text_widget: Tkinter Text widget to style.
-            :type text_widget: Text
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         cfg: DslSyntaxHighlighterConfig = self._config
@@ -120,11 +110,6 @@ class DslSyntaxHighlighter:
             Scans and colorizes full text content of widget.
 
             :param text_widget: Tkinter Text widget to highlight.
-            :type text_widget: Text
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         cfg: DslSyntaxHighlighterConfig = self._config

@@ -28,18 +28,14 @@ from time import sleep, time
 from botracked.core.model.protocol_opcode import ProtocolOpcode
 from botracked.core.model.telemetry_data import TelemetryData
 from botracked.infrastructure.communication.binary_codec import BinaryCodec
-from botracked.infrastructure.communication.serial_transport import (
-    SerialTransport,
-)
-from botracked.infrastructure.communication.tcp_transport import (
-    TcpTransport,
-)
+from botracked.infrastructure.communication.serial_transport import SerialTransport
+from botracked.infrastructure.communication.tcp_transport import TcpTransport
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -131,13 +127,17 @@ class TelemetryPoller:
             :exceptions: None.
         '''
         poll_ticks: int = 0
+
         while not self._stop_event.is_set() and transport.is_connected():
             chunk: bytes = transport.receive(512)
+
             if chunk:
                 frames = self._codec.decode_stream(chunk)
+
                 for opcode, payload in frames:
                     try:
                         op_name: str = ProtocolOpcode(opcode).name
+
                     except ValueError:
                         op_name = f'0x{opcode:02X}'
 
@@ -146,6 +146,7 @@ class TelemetryPoller:
                         + payload.hex().upper()
                     )
                     self._on_packet('RX', op_name, wire)
+
                     if opcode in (
                         ProtocolOpcode.RESP_STATUS,
                         ProtocolOpcode.RESP_DIAG,
@@ -159,8 +160,11 @@ class TelemetryPoller:
                             )
                         )
                         self._on_telemetry(telemetry)
+
             poll_ticks += 1
+
             if poll_ticks >= 10:
                 poll_ticks = 0
                 self._request_status_fn()
+
             sleep(0.05)

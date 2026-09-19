@@ -30,7 +30,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -57,8 +57,6 @@ class StudioCommandDefinition:
             Returns command name.
 
             :return: String name.
-            :rtype: str
-
             :exceptions: None.
         '''
         return 'studio'
@@ -69,8 +67,6 @@ class StudioCommandDefinition:
             Returns command help description.
 
             :return: Help string.
-            :rtype: str
-
             :exceptions: None.
         '''
         return 'Launch botracked robot cockpit and mission scripting studio'
@@ -81,8 +77,6 @@ class StudioCommandDefinition:
             Returns CLI option specifications.
 
             :return: Sequence of OptionData instances.
-            :rtype: Sequence[OptionData]
-
             :exceptions: None.
         '''
         return [
@@ -129,8 +123,6 @@ class StudioCommandDefinition:
             Returns string representation of definition.
 
             :return: String.
-            :rtype: str
-
             :exceptions: None.
         '''
         return to_str(self)

@@ -178,8 +178,14 @@ Tool structure
          │   │   ├── __init__.py
          │   │   └── setup/
          │   │       ├── bundle.py
+         │   │       ├── dep_validator.py
+         │   │       ├── dependencies.py
          │   │       ├── factory.py
          │   │       ├── __init__.py
+         │   │       ├── keys.py
+         │   │       ├── opt_validator.py
+         │   │       ├── options.py
+         │   │       ├── registry.py
          │   │       └── validator.py
          │   ├── command/
          │   │   ├── command.py
@@ -251,7 +257,7 @@ Tool structure
              ├── registry.py
              └── validator.py
 
-     22 directories, 101 files
+     22 directories, 107 files
 ```
 </details>
 
@@ -459,7 +465,7 @@ All communication between **botracked** and the physical or virtual robot uses a
 | `botracked/core/model/dsl/token_type.py` | 30 | 0 | 100%|
 | `botracked/core/model/motion_command.py` | 29 | 7 | 76%|
 | `botracked/core/model/protocol_opcode.py` | 30 | 3 | 90%|
-| `botracked/core/model/telemetry_data.py` | 71 | 35 | 51%|
+| `botracked/core/model/telemetry_data.py` | 74 | 38 | 49%|
 | `botracked/core/service/__init__.py` | 9 | 0 | 100%|
 | `botracked/core/service/bot_motion_service.py` | 55 | 13 | 76%|
 | `botracked/core/service/bot_service.py` | 68 | 17 | 75%|
@@ -477,7 +483,7 @@ All communication between **botracked** and the physical or virtual robot uses a
 | `botracked/core/service/dsl/tbot_compiler.py` | 67 | 8 | 88%|
 | `botracked/core/service/dsl/tbot_dsl_service.py` | 35 | 0 | 100%|
 | `botracked/core/service/dsl/tbot_lexer.py` | 67 | 4 | 94%|
-| `botracked/core/service/dsl/tbot_parser.py` | 112 | 20 | 82%|
+| `botracked/core/service/dsl/tbot_parser.py` | 116 | 22 | 81%|
 | `botracked/core/service/ibot_connection_service.py` | 16 | 0 | 100%|
 | `botracked/core/service/ibot_mission_service.py` | 18 | 0 | 100%|
 | `botracked/core/service/ibot_motion_service.py` | 20 | 0 | 100%|
@@ -485,15 +491,21 @@ All communication between **botracked** and the physical or virtual robot uses a
 | `botracked/core/service/ibot_telemetry_service.py` | 18 | 0 | 100%|
 | `botracked/core/service/mission_runner.py` | 74 | 41 | 45%|
 | `botracked/core/service/telemetry_poller.py` | 66 | 30 | 55%|
-| `botracked/engine.py` | 65 | 65 | 0%|
+| `botracked/engine.py` | 57 | 57 | 0%|
 | `botracked/infrastructure/__init__.py` | 9 | 0 | 100%|
 | `botracked/infrastructure/cli/__init__.py` | 9 | 0 | 100%|
 | `botracked/infrastructure/cli/engine.py` | 44 | 12 | 73%|
 | `botracked/infrastructure/cli/icli.py` | 15 | 0 | 100%|
 | `botracked/infrastructure/cli/setup/__init__.py` | 9 | 0 | 100%|
 | `botracked/infrastructure/cli/setup/bundle.py` | 22 | 1 | 95%|
-| `botracked/infrastructure/cli/setup/factory.py` | 26 | 1 | 96%|
-| `botracked/infrastructure/cli/setup/validator.py` | 35 | 5 | 86%|
+| `botracked/infrastructure/cli/setup/dep_validator.py` | 36 | 5 | 86%|
+| `botracked/infrastructure/cli/setup/dependencies.py` | 18 | 0 | 100%|
+| `botracked/infrastructure/cli/setup/factory.py` | 36 | 1 | 97%|
+| `botracked/infrastructure/cli/setup/keys.py` | 28 | 0 | 100%|
+| `botracked/infrastructure/cli/setup/opt_validator.py` | 36 | 5 | 86%|
+| `botracked/infrastructure/cli/setup/options.py` | 17 | 0 | 100%|
+| `botracked/infrastructure/cli/setup/registry.py` | 24 | 1 | 96%|
+| `botracked/infrastructure/cli/setup/validator.py` | 43 | 5 | 88%|
 | `botracked/infrastructure/command/__init__.py` | 9 | 0 | 100%|
 | `botracked/infrastructure/command/command.py` | 16 | 0 | 100%|
 | `botracked/infrastructure/command/icommand_definition.py` | 14 | 0 | 100%|
@@ -517,13 +529,13 @@ All communication between **botracked** and the physical or virtual robot uses a
 | `botracked/infrastructure/gui/controls/jog_panel_callbacks.py` | 19 | 0 | 100%|
 | `botracked/infrastructure/gui/controls/jog_panel_config.py` | 29 | 0 | 100%|
 | `botracked/infrastructure/gui/editor/__init__.py` | 9 | 0 | 100%|
-| `botracked/infrastructure/gui/editor/dsl_editor_panel.py` | 118 | 25 | 79%|
+| `botracked/infrastructure/gui/editor/dsl_editor_panel.py` | 122 | 29 | 76%|
 | `botracked/infrastructure/gui/editor/dsl_editor_panel_config.py` | 26 | 0 | 100%|
 | `botracked/infrastructure/gui/editor/dsl_preset_loader.py` | 32 | 3 | 91%|
 | `botracked/infrastructure/gui/editor/dsl_syntax_highlighter.py` | 50 | 0 | 100%|
 | `botracked/infrastructure/gui/editor/dsl_syntax_highlighter_config.py` | 25 | 0 | 100%|
 | `botracked/infrastructure/gui/editor/mission_callbacks.py` | 18 | 0 | 100%|
-| `botracked/infrastructure/gui/engine.py` | 106 | 12 | 89%|
+| `botracked/infrastructure/gui/engine.py` | 107 | 13 | 88%|
 | `botracked/infrastructure/gui/gui_config.py` | 21 | 0 | 100%|
 | `botracked/infrastructure/gui/gui_event_mediator.py` | 36 | 9 | 75%|
 | `botracked/infrastructure/gui/igui.py` | 15 | 0 | 100%|
@@ -538,15 +550,15 @@ All communication between **botracked** and the physical or virtual robot uses a
 | `botracked/infrastructure/gui/theme/style.py` | 43 | 1 | 98%|
 | `botracked/setup/__init__.py` | 9 | 0 | 100%|
 | `botracked/setup/bundle.py` | 24 | 1 | 96%|
-| `botracked/setup/dep_validator.py` | 34 | 5 | 85%|
+| `botracked/setup/dep_validator.py` | 36 | 5 | 86%|
 | `botracked/setup/dependencies.py` | 19 | 0 | 100%|
-| `botracked/setup/factory.py` | 44 | 2 | 95%|
+| `botracked/setup/factory.py` | 45 | 2 | 96%|
 | `botracked/setup/keys.py` | 31 | 0 | 100%|
-| `botracked/setup/opt_validator.py` | 34 | 2 | 94%|
+| `botracked/setup/opt_validator.py` | 35 | 2 | 94%|
 | `botracked/setup/options.py` | 16 | 0 | 100%|
 | `botracked/setup/registry.py` | 32 | 0 | 100%|
-| `botracked/setup/validator.py` | 38 | 5 | 87%|
-| **Total** | 3117 | 660 | 79% |
+| `botracked/setup/validator.py` | 48 | 5 | 90%|
+| **Total** | 3312 | 673 | 80% |
 
 </details>
 

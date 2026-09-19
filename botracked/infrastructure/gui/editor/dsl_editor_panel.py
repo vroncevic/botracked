@@ -31,6 +31,7 @@ from tkinter import (
     Scrollbar,
     StringVar,
     Text,
+    Tk,
 )
 from tkinter.ttk import Button, Combobox, Frame, Label
 
@@ -54,7 +55,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -98,7 +99,7 @@ class DslEditorPanel:
 
     def __init__(
         self,
-        parent: Frame,
+        parent: Tk | Frame,
         dsl_service: TbotDslService,
         callbacks: MissionCallbacks,
         config: DslEditorPanelConfig | None = None,
@@ -107,20 +108,9 @@ class DslEditorPanel:
             Initializes mission script editor panel.
 
             :param parent: Parent Tk widget.
-            :type parent: Frame
-
             :param dsl_service: Compiler and validator orchestrator.
-            :type dsl_service: TbotDslService
-
             :param callbacks: MissionCallbacks bundle holding delegates.
-            :type callbacks: MissionCallbacks
-
             :param config: Optional editor configuration instance.
-            :type config: DslEditorPanelConfig | None
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._dsl_service = dsl_service
@@ -138,8 +128,6 @@ class DslEditorPanel:
             Returns root Frame widget.
 
             :return: Frame instance.
-            :rtype: Frame
-
             :exceptions: None.
         '''
         return self._frame
@@ -149,11 +137,6 @@ class DslEditorPanel:
             Loads script text into the editor and applies syntax highlighting.
 
             :param script_text: Raw .track script text.
-            :type script_text: str
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._editor.delete('1.0', END)
@@ -165,8 +148,6 @@ class DslEditorPanel:
             Returns currently authored script text.
 
             :return: String script content.
-            :rtype: str
-
             :exceptions: None.
         '''
         return self._editor.get('1.0', END)
@@ -176,14 +157,7 @@ class DslEditorPanel:
             Sets status bar message with custom color.
 
             :param text: Message string.
-            :type text: str
-
             :param fg: Color hex code.
-            :type fg: str
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self._status_var.set(text)
@@ -286,11 +260,6 @@ class DslEditorPanel:
             Callback invoked when a script preset is chosen.
 
             :param _event: Optional event triggering selection.
-            :type _event: object
-
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         selected_name: str = self._preset_combo.get()
@@ -302,48 +271,41 @@ class DslEditorPanel:
         '''
             Callback invoked to validate script syntax and semantics.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         code: str = self.get_script()
         valid: bool
         msg: str
-        steps: list[CompiledStep]
-        valid, msg, steps = self._dsl_service.validate(code)
+        valid, msg = self._dsl_service.validate(code)
         if valid:
-            self.set_status(f'✅ Validation successful: {len(steps)} steps generated.', UIColors.GREEN)
+            self.set_status(f'✅ {msg}', UIColors.GREEN)
         else:
-            self.set_status(f'❌ Validation error: {msg}', UIColors.RED)
+            self.set_status(f'❌ {msg}', UIColors.RED)
 
     def _handle_run(self) -> None:
         '''
             Callback invoked to compile and run the mission script.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         code: str = self.get_script()
         valid: bool
         msg: str
-        steps: list[CompiledStep]
-        valid, msg, steps = self._dsl_service.validate(code)
+        valid, msg = self._dsl_service.validate(code)
         if not valid:
             self.set_status(f'❌ Compilation failed: {msg}', UIColors.RED)
             return
 
-        self.set_status(f'🚀 Running mission ({len(steps)} steps)...', UIColors.GREEN)
-        self._callbacks.on_start(steps)
+        try:
+            steps: list[CompiledStep] = self._dsl_service.compile(code)
+            self.set_status(f'🚀 Running mission ({len(steps)} steps)...', UIColors.GREEN)
+            self._callbacks.on_start(steps)
+        except Exception as err:
+            self.set_status(f'❌ Compilation failed: {err}', UIColors.RED)
 
     def _handle_pause(self) -> None:
         '''
             Callback invoked to pause the running mission.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''
@@ -354,9 +316,6 @@ class DslEditorPanel:
         '''
             Callback invoked to resume the paused mission.
 
-            :return: None.
-            :rtype: None
-
             :exceptions: None.
         '''
         self.set_status('⏯ Mission resumed', UIColors.GREEN)
@@ -365,9 +324,6 @@ class DslEditorPanel:
     def _handle_abort(self) -> None:
         '''
             Callback invoked to abort the active mission.
-
-            :return: None.
-            :rtype: None
 
             :exceptions: None.
         '''

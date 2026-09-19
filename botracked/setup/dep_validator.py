@@ -34,7 +34,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -57,23 +57,26 @@ class BotrackedBundleDependenciesValidator:
             Validates the botracked bundle dependencies.
 
             :param dependencies: The bundle dependencies to be validated.
-            :type dependencies: BotrackedBundleDependencies
-
-            :return: None.
-            :rtype: None
-
-            :exceptions: ATSValueError, ATSTypeError.
+            :exceptions:
+                | ATSValueError: The botracked bundle dependencies must be provided and have proper values.
+                | ATSTypeError:  The botracked bundle dependencies must be an instance of Mapping and its
+                |                attributes must be instances of their respective types.
         '''
         ctx: str = 'botracked_bundle_dependencies_validator::validate(...)'
-        not_none(dependencies, ctx, 'the botracked bundle dependencies must be provided')
-        istype(dependencies, Mapping, ctx, 'the botracked bundle dependencies must be a Mapping')
+        msg_dependencies_none: str = 'the botracked bundle dependencies must be provided'
+        msg_dependencies_istype: str = 'the botracked bundle dependencies must be a Mapping'
+
+        not_none(dependencies, ctx, msg_dependencies_none)
+        istype(dependencies, Mapping, ctx, msg_dependencies_istype)
 
         for attr_name, expected_type in BotrackedBundleKeys.get_dependency_to_type().items():
-            msg_none: str = f'the {attr_name.replace("_", " ")} must be provided'
-            msg_type: str = f'the {attr_name.replace("_", " ")} must be an instance of {expected_type.__name__}'
+            msg_attr_name_none: str = f'the {attr_name.replace("_", " ")} must be provided'
+            msg_attr_name_istype: str = f'the {attr_name.replace("_", " ")} must be an instance of {expected_type.__name__}'
+
             attr_val = dependencies.get(attr_name)
-            not_none(attr_val, ctx, msg_none)
-            istype(attr_val, expected_type, ctx, msg_type)
+
+            not_none(attr_val, ctx, msg_attr_name_none)
+            istype(attr_val, expected_type, ctx, msg_attr_name_istype)
 
     @classmethod
     def is_valid(cls, dependencies: BotrackedBundleDependencies) -> bool:
@@ -81,15 +84,12 @@ class BotrackedBundleDependenciesValidator:
             Checks if the botracked bundle dependencies are valid.
 
             :param dependencies: The bundle dependencies to check.
-            :type dependencies: BotrackedBundleDependencies
-
             :return: True if valid, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         try:
             cls.validate(dependencies)
             return True
+
         except (ATSValueError, ATSTypeError):
             return False

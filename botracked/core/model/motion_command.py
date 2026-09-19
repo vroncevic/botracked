@@ -27,7 +27,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -77,6 +77,7 @@ class MotionCommand(IntEnum):
             5: 'SPIN LEFT',
             6: 'SPIN RIGHT',
         }
+
         return labels.get(self.value, 'UNKNOWN')
 
     @classmethod
@@ -90,7 +91,9 @@ class MotionCommand(IntEnum):
                 | ValueError: If string does not match any command.
         '''
         normalized: str = name.strip().upper()
+
         for member in cls:
             if normalized in (member.name, member.label):
                 return member
+
         raise ValueError(f'Unknown motion command: {name}')

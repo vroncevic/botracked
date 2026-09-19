@@ -29,18 +29,14 @@ from ats_utilities.utils.reflection import to_str
 from botracked.core.service.bot_service import BotService
 from botracked.infrastructure.cli.setup.bundle import CLIBundle
 from botracked.infrastructure.cli.setup.validator import CLIBundleValidator
-from botracked.infrastructure.command.icommand_definition import (
-    ICommandDefinition,
-)
-from botracked.infrastructure.command.icommand_executor import (
-    ICommandExecutor,
-)
+from botracked.infrastructure.command.icommand_definition import ICommandDefinition
+from botracked.infrastructure.command.icommand_executor import ICommandExecutor
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -74,12 +70,10 @@ class CLI:
             Initializes CLI adapter with validated bundle.
 
             :param bundle: CLIBundle instance.
-            :type bundle: CLIBundle
-
-            :return: None.
-            :rtype: None
-
-            :exceptions: None.
+            :exceptions:
+                | ATSValueError: The CLI bundle must be provided and have proper values.
+                | ATSTypeError:  The CLI bundle must be an instance of CLIBundle and
+                |                its attributes must be instances of their respective types.
         '''
         CLIBundleValidator.validate(bundle)
         self._service = bundle.service
@@ -93,8 +87,6 @@ class CLI:
             Checks if CLI is initialized.
 
             :return: True if ready, False otherwise.
-            :rtype: bool
-
             :exceptions: None.
         '''
         return self._is_initialized
@@ -104,17 +96,16 @@ class CLI:
             Parses CLI command arguments and executes matching command strategy.
 
             :return: Execution dictionary with returncode, stdout, stderr.
-            :rtype: Mapping[str, object]
-
             :exceptions: None.
         '''
         try:
             command_name, params = self._parser.parse_command()
-            # If no command passed or default studio invoked:
+
             if not command_name:
                 command_name = 'studio'
 
             executor = self._executors.get(command_name)
+
             if executor is not None:
                 return executor.execute(params=params, service=self._service)
 
@@ -123,6 +114,7 @@ class CLI:
                 'stdout': '',
                 'stderr': f'botracked::cli: unknown command {command_name!r}',
             }
+
         except Exception as exc:
             return {
                 'returncode': 1,
@@ -135,8 +127,6 @@ class CLI:
             Returns string representation of CLI.
 
             :return: String.
-            :rtype: str
-
             :exceptions: None.
         '''
         return to_str(self)
