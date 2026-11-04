@@ -27,14 +27,14 @@ from dataclasses import dataclass
 from ats_utilities.option.imanager import IOptionManager
 from ats_utilities.utils.reflection import instance_to_dict
 
-from botracked.core.service.bot_service import BotService
-from botracked.infrastructure.command.command import CommandBundle
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
+from botracked.infrastructure.command.bundle import CommandBundle
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -48,14 +48,14 @@ class CLIBundle:
         It defines:
 
             :attributes:
-                | service - Core robot business service.
+                | service - Core robot application services bundle.
                 | parser - Option manager parser interface.
                 | commands - Sequence of registered command bundles.
             :methods:
                 | to_dict - Converts the CLI bundle to a dictionary.
     '''
 
-    service: BotService
+    service: BotRuntimeBundle
     parser: IOptionManager
     commands: Sequence[CommandBundle]
 

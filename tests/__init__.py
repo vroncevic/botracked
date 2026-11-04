@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 '''
-Package
-    tests
+Module
+    __init__.py
 Copyright
     Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>
     botracked is free software: you can redistribute it and/or modify it
@@ -16,16 +16,16 @@ Copyright
     You should have received a copy of the GNU General Public License along
     with this program. If not, see <http://www.gnu.org/licenses/>.
 Info
-    Unit test package for botracked.
+    Defines package initialization metadata for botracked test suite.
 '''
 
 from __future__ import annotations
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.0'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'

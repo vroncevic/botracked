@@ -21,13 +21,13 @@ Info
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -47,33 +47,10 @@ class CompiledStep:
                 | auto_stop_after - Indicates if a STOP frame should follow.
                 | description - Human-readable description of this step.
                 | line_number - Source line number that generated this step.
-            :methods:
-                | frame_count - Returns the number of frames in this step.
-                | has_delay - Checks whether this step requires a timing delay.
     '''
 
-    frames: tuple[bytes, ...] = field(default_factory=tuple)
-    duration_sec: float = 0.0
-    auto_stop_after: bool = False
-    description: str = ''
-    line_number: int = 1
-
-    @property
-    def frame_count(self) -> int:
-        '''
-            Returns the number of frames contained in this compiled step.
-
-            :return: Total number of binary command frames.
-            :exceptions: None.
-        '''
-        return len(self.frames)
-
-    @property
-    def has_delay(self) -> bool:
-        '''
-            Checks whether this compiled step requires a pause or execution delay.
-
-            :return: True if step duration is greater than zero, False otherwise.
-            :exceptions: None.
-        '''
-        return self.duration_sec > 0.0
+    frames: tuple[bytes, ...]
+    duration_sec: float
+    auto_stop_after: bool
+    description: str
+    line_number: int

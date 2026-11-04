@@ -22,35 +22,46 @@ Info
 from __future__ import annotations
 
 from os.path import abspath, dirname, join
+from pathlib import Path
+from typing import ClassVar
 
 from ats_utilities.base.setup.bundle import BaseBundle
 from ats_utilities.base.setup.factory import BaseBundleFactory
 from ats_utilities.base.setup.options import BaseBundleOptions
-from ats_utilities.context.bundle import ContextBundle
 from ats_utilities.context.factory import ContextBundleFactory
 
-from botracked.core.service.bot_service import BotService
-from botracked.infrastructure.cli.engine import CLI
-from botracked.infrastructure.cli.setup.bundle import CLIBundle
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
+from botracked.infrastructure.cli.dependencies import CLIDependencies
+from botracked.infrastructure.cli.factory import CLIFactory
 from botracked.infrastructure.cli.setup.factory import CLIBundleFactory
 from botracked.infrastructure.cli.setup.options import CLIBundleOptions
-from botracked.infrastructure.gui.engine import BotrackedGUI
+from botracked.infrastructure.command.dependencies import CommandDependencies
+from botracked.infrastructure.command.factory import CommandFactory
+from botracked.infrastructure.command.preloader import ScriptPreloader
+from botracked.infrastructure.connection.preferences.dependencies import PreferencesDependencies
+from botracked.infrastructure.connection.preferences.factory import PreferencesFactory
+from botracked.infrastructure.connection.scanner.dependencies import ScannerDependencies
+from botracked.infrastructure.connection.scanner.factory import ScannerFactory
+from botracked.infrastructure.gui.igui import IGUI
+from botracked.infrastructure.preset.dependencies import PresetRepositoryDependencies
+from botracked.infrastructure.preset.factory import PresetRepositoryFactory
 from botracked.setup.bundle import BotrackedBundle
-from botracked.setup.dependencies import BotrackedBundleDependencies
+from botracked.setup.gui.dependencies import BotGuiSessionDependencies
+from botracked.setup.gui.launcher import GuiSessionLauncher
 from botracked.setup.keys import BotrackedBundleKeys
 from botracked.setup.opt_validator import BotrackedBundleOptionsValidator
 from botracked.setup.options import BotrackedBundleOptions
 from botracked.setup.registry import BotrackedBundleRegistry
+from botracked.setup.service.factory import BotServiceFactory
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
-
 
 class BotrackedBundleFactory:
     '''
@@ -59,70 +70,127 @@ class BotrackedBundleFactory:
         It defines:
 
             :attributes:
-                | _info_file - Default path to botracked.cfg configuration file.
+                | DEFAULT_INFO_FILE - Default path to botracked.cfg info file.
+                | DEFAULT_PRESETS_DIR - Repository examples directory for .track.
+                | PREFS_DIR_NAME - User home hidden directory name.
+                | PREFS_FILE_NAME - Connection preferences JSON filename.
+                | SCANNER_INCLUDE_LINKS - Flag enabling symlink port scanning.
             :methods:
-                | create_bundle - Constructs and wires all components.
+                | create_bundle - Constructs bundle with default options.
+                | create_bundle_with_options - Constructs bundle with options.
                 | get_version - Returns factory version string.
     '''
 
-    _info_file: str = join(dirname(dirname(abspath(__file__))), 'infrastructure', 'config', 'botracked.cfg',)
+    DEFAULT_INFO_FILE: ClassVar[str] = join(
+        dirname(dirname(abspath(__file__))),
+        'infrastructure',
+        'config',
+        'botracked.cfg',
+    )
+    DEFAULT_PRESETS_DIR: ClassVar[Path] = (
+        Path(__file__).resolve().parents[2] / 'examples'
+    )
+    PREFS_DIR_NAME: ClassVar[str] = '.botracked'
+    PREFS_FILE_NAME: ClassVar[str] = 'preferences.json'
+    SCANNER_INCLUDE_LINKS: ClassVar[bool] = False
 
     @classmethod
-    def create_bundle(cls, options: BotrackedBundleOptions | None = None) -> BotrackedBundle:
+    def create_bundle(cls) -> BotrackedBundle:
         '''
-            Constructs and wires all application components.
+            Constructs and wires all application components with default options.
 
-            :param options: Optional pre-configured bundle options.
             :return: Fully wired BotrackedBundle instance.
             :exceptions:
-                | ATSValueError: The botracked bundle options must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle options must be an instance of Mapping and its
-                |                attributes must be instances of their respective types.
-                | ATSValueError: The botracked bundle dependencies must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle dependencies must be an instance of Mapping and its
-                |                attributes must be instances of their respective types.
-                | ATSValueError: The botracked bundle must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
-                |                its attributes must be instances of their respective types.
+                | ATSValueError: If bundle validation fails.
+                | ATSTypeError: If bundle component types are invalid.
         '''
-        if options is not None:
-            BotrackedBundleOptionsValidator.validate(options)
+        return cls.create_bundle_with_options(BotrackedBundleOptions())
+
+    @classmethod
+    def create_bundle_with_options(
+        cls, options: BotrackedBundleOptions
+    ) -> BotrackedBundle:
+        '''
+            Constructs and wires all application components with given options.
+
+            :param options: Validated BotrackedBundleOptions mapping.
+            :return: Fully wired BotrackedBundle instance.
+            :exceptions:
+                | ATSValueError: If bundle options or dependencies are invalid.
+                | ATSTypeError: If bundle options or dependencies have bad types.
+        '''
+        BotrackedBundleOptionsValidator.validate(options)
 
         info_file: str = (
             options[BotrackedBundleKeys.OPTION_INFO_FILE]
-            if options is not None and BotrackedBundleKeys.OPTION_INFO_FILE in options
-            else cls._info_file
+            if BotrackedBundleKeys.OPTION_INFO_FILE in options
+            else cls.DEFAULT_INFO_FILE
         )
-
-        context_bundle: ContextBundle = ContextBundleFactory.create_bundle()
         base_bundle: BaseBundle = BaseBundleFactory.create_bundle(
             options=BaseBundleOptions(
                 info_file=info_file,
                 use_generator=False,
-                context_bundle=context_bundle,
+                context_bundle=ContextBundleFactory.create_bundle(),
             )
         )
+        service: BotRuntimeBundle = BotServiceFactory.create()
+        prefs_repo = PreferencesFactory.create(
+            PreferencesDependencies(
+                config_file=(
+                    Path.home() / cls.PREFS_DIR_NAME / cls.PREFS_FILE_NAME
+                ),
+                context_bundle=base_bundle.context_bundle,
+            )
+        ).repository
+        scanner = ScannerFactory.create(
+            ScannerDependencies(include_links=cls.SCANNER_INCLUDE_LINKS)
+        ).scanner
+        preset_repo = PresetRepositoryFactory.create(
+            PresetRepositoryDependencies(presets_dir=cls.DEFAULT_PRESETS_DIR)
+        ).repository
 
-        service: BotService = BotService()
-        gui: BotrackedGUI = BotrackedGUI(bot_service=service)
-
-        cli_bundle: CLIBundle = CLIBundleFactory.create_bundle(
-            CLIBundleOptions(
-                service=service,
-                gui=gui,
-                parser=base_bundle.option_manager,
+        gui: IGUI = GuiSessionLauncher(
+            BotGuiSessionDependencies(
+                runtime=service,
+                preferences_repository=prefs_repo,
+                port_scanner=scanner,
+                preset_repository=preset_repo,
             )
         )
-        cli: CLI = CLI(cli_bundle)
+        cmd_prov = CommandFactory.create(CommandDependencies(gui=gui))
+        if (
+            BotrackedBundleKeys.OPTION_SCRIPT in options
+            and options[BotrackedBundleKeys.OPTION_SCRIPT]
+        ):
+            cmd_prov.preloader.preload(
+                {
+                    ScriptPreloader.KEY_SCRIPT: options[
+                        BotrackedBundleKeys.OPTION_SCRIPT
+                    ]
+                },
+                gui,
+            )
 
-        dependencies: BotrackedBundleDependencies = {
-            BotrackedBundleKeys.DEPENDENCY_BASE: base_bundle,
-            BotrackedBundleKeys.DEPENDENCY_SERVICE: service,
-            BotrackedBundleKeys.DEPENDENCY_GUI: gui,
-            BotrackedBundleKeys.DEPENDENCY_CLI: cli,
-        }
+        cli = CLIFactory.create(
+            CLIDependencies(
+                bundle=CLIBundleFactory.create_bundle(
+                    CLIBundleOptions(
+                        service=service,
+                        parser=base_bundle.option_manager,
+                        commands=(cmd_prov.bundle,),
+                    )
+                )
+            )
+        ).cli
 
-        return BotrackedBundleRegistry.create_bundle(dependencies)
+        return BotrackedBundleRegistry.create_bundle(
+            {
+                BotrackedBundleKeys.DEPENDENCY_BASE: base_bundle,
+                BotrackedBundleKeys.DEPENDENCY_SERVICE: service,
+                BotrackedBundleKeys.DEPENDENCY_GUI: gui,
+                BotrackedBundleKeys.DEPENDENCY_CLI: cli,
+            }
+        )
 
     @classmethod
     def get_version(cls) -> str:

@@ -1,6 +1,14 @@
 botracked.infrastructure.gui.theme package
 ==========================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   botracked.infrastructure.gui.theme.controls
+
 Submodules
 ----------
 
@@ -8,6 +16,10 @@ Submodules
    :maxdepth: 4
 
    botracked.infrastructure.gui.theme.colors
+   botracked.infrastructure.gui.theme.dependencies
+   botracked.infrastructure.gui.theme.factory
+   botracked.infrastructure.gui.theme.iconfigurator
+   botracked.infrastructure.gui.theme.provides
    botracked.infrastructure.gui.theme.style
 
 Module contents

@@ -22,21 +22,22 @@ Info
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import ClassVar
 
 from ats_utilities.option.imanager import IOptionManager
 from ats_utilities.utils.reflection import to_str
 
-from botracked.core.service.bot_service import BotService
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
 from botracked.infrastructure.cli.setup.bundle import CLIBundle
 from botracked.infrastructure.cli.setup.validator import CLIBundleValidator
-from botracked.infrastructure.command.icommand_definition import ICommandDefinition
-from botracked.infrastructure.command.icommand_executor import ICommandExecutor
+from botracked.infrastructure.command.idefinition import ICommandDefinition
+from botracked.infrastructure.command.iexecutor import ICommandExecutor
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -49,7 +50,9 @@ class CLI:
         It defines:
 
             :attributes:
-                | _service - Robot business service facade.
+                | DEFAULT_COMMAND - Default subcommand executed when omitted.
+                | EXIT_FAILURE - Error return code integer.
+                | _service - Core robot application services bundle.
                 | _parser - Option manager parser interface.
                 | _executors - Mapping of command names to command executors.
                 | _is_initialized - Flag tracking initialization state.
@@ -60,9 +63,20 @@ class CLI:
                 | __str__ - Returns string representation of CLI.
     '''
 
-    _service: BotService
+    DEFAULT_COMMAND: ClassVar[str] = 'studio'
+    EXIT_FAILURE: ClassVar[int] = 1
+
+    _service: BotRuntimeBundle
     _parser: IOptionManager
-    _executors: Mapping[str, ICommandExecutor[ICommandDefinition, object, object, object]]
+    _executors: Mapping[
+        str,
+        ICommandExecutor[
+            ICommandDefinition,
+            Mapping[str, object],
+            Mapping[str, object],
+            BotRuntimeBundle,
+        ],
+    ]
     _is_initialized: bool
 
     def __init__(self, bundle: CLIBundle) -> None:
@@ -78,8 +92,12 @@ class CLI:
         CLIBundleValidator.validate(bundle)
         self._service = bundle.service
         self._parser = bundle.parser
-        self._executors = {pair.definition.name: pair.executor for pair in bundle.commands}
-        self._parser.register_commands([pair.definition for pair in bundle.commands])
+        self._executors = {
+            pair.definition.name: pair.executor for pair in bundle.commands
+        }
+        self._parser.register_commands(
+            [pair.definition for pair in bundle.commands]
+        )
         self._is_initialized = True
 
     def is_initialized(self) -> bool:
@@ -102,22 +120,22 @@ class CLI:
             command_name, params = self._parser.parse_command()
 
             if not command_name:
-                command_name = 'studio'
+                command_name = self.DEFAULT_COMMAND
 
-            executor = self._executors.get(command_name)
-
-            if executor is not None:
-                return executor.execute(params=params, service=self._service)
+            if command_name in self._executors:
+                return self._executors[command_name].execute(
+                    params=params, service=self._service
+                )
 
             return {
-                'returncode': 1,
+                'returncode': self.EXIT_FAILURE,
                 'stdout': '',
                 'stderr': f'botracked::cli: unknown command {command_name!r}',
             }
 
         except Exception as exc:
             return {
-                'returncode': 1,
+                'returncode': self.EXIT_FAILURE,
                 'stdout': '',
                 'stderr': f'botracked::cli exception: {exc}',
             }

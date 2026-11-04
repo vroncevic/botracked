@@ -1,6 +1,15 @@
 botracked.setup package
 =======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   botracked.setup.gui
+   botracked.setup.service
+
 Submodules
 ----------
 

@@ -1,0 +1,58 @@
+# -*- coding: UTF-8 -*-
+
+'''
+Module
+    state_test.py
+Copyright
+    Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>
+    botracked is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    botracked is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    See the GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License along
+    with this program. If not, see <http://www.gnu.org/licenses/>.
+Info
+    Unit tests for SpeedState immutable compilation state carrier.
+'''
+
+from __future__ import annotations
+
+from dataclasses import FrozenInstanceError
+from unittest import TestCase, main
+
+from botracked.core.service.dsl.compiler.node.state import SpeedState
+
+__author__ = 'Vladimir Roncevic'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
+__credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
+__license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
+__version__ = '1.0.2'
+__maintainer__ = 'Vladimir Roncevic'
+__email__ = 'elektron.ronca@gmail.com'
+__status__ = 'Updated'
+
+
+class SpeedStateTest(TestCase):
+    '''
+        Verifies SpeedState fields and immutability.
+    '''
+
+    def test_fields_and_frozen(self) -> None:
+        '''
+            Verifies current_speed and applied_speed storage and FrozenInstanceError.
+
+            :exceptions: None.
+        '''
+        state = SpeedState(current_speed=180, applied_speed=200)
+        self.assertEqual(state.current_speed, 180)
+        self.assertEqual(state.applied_speed, 200)
+        with self.assertRaises(FrozenInstanceError):
+            setattr(state, 'current_speed', 50)
+
+
+if __name__ == '__main__':
+    main()

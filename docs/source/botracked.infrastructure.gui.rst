@@ -8,11 +8,15 @@ Subpackages
    :maxdepth: 4
 
    botracked.infrastructure.gui.connection
-   botracked.infrastructure.gui.controls
-   botracked.infrastructure.gui.editor
-   botracked.infrastructure.gui.stream
+   botracked.infrastructure.gui.console
+   botracked.infrastructure.gui.layout
+   botracked.infrastructure.gui.lifecycle
+   botracked.infrastructure.gui.mission
+   botracked.infrastructure.gui.motion
+   botracked.infrastructure.gui.session
    botracked.infrastructure.gui.telemetry
    botracked.infrastructure.gui.theme
+   botracked.infrastructure.gui.window
 
 Submodules
 ----------
@@ -20,9 +24,6 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   botracked.infrastructure.gui.engine
-   botracked.infrastructure.gui.gui_config
-   botracked.infrastructure.gui.gui_event_mediator
    botracked.infrastructure.gui.igui
 
 Module contents

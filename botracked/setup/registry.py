@@ -16,63 +16,61 @@ Copyright
     You should have received a copy of the GNU General Public License along
     with this program. If not, see <http://www.gnu.org/licenses/>.
 Info
-    Encapsulates core botracked components for simplification of botracked bundle.
+    Encapsulates core botracked components for bundle creation.
 '''
 
 from __future__ import annotations
 
 from ats_utilities.base.setup.bundle import BaseBundle
 
-from botracked.core.service.ibot_service import IBotService
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
 from botracked.infrastructure.cli.icli import ICLI
 from botracked.infrastructure.gui.igui import IGUI
 from botracked.setup.bundle import BotrackedBundle
-from botracked.setup.dependencies import BotrackedBundleDependencies
 from botracked.setup.dep_validator import BotrackedBundleDependenciesValidator
+from botracked.setup.dependencies import BotrackedBundleDependencies
 from botracked.setup.keys import BotrackedBundleKeys
 from botracked.setup.validator import BotrackedBundleValidator
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
 
-
 class BotrackedBundleRegistry:
     '''
-        Encapsulates core botracked components for simplification of botracked
-        bundle.
+        Encapsulates core botracked components for bundle creation.
 
         It defines:
 
             :methods:
-                | create_bundle - Creates the botracked bundle from dependencies.
-                | get_version - Returns the registry version string.
+                | create_bundle - Creates botracked bundle from dependencies.
+                | get_version - Returns registry version string.
     '''
 
     @classmethod
-    def create_bundle(cls, dependencies: BotrackedBundleDependencies) -> BotrackedBundle:
+    def create_bundle(
+        cls, dependencies: BotrackedBundleDependencies
+    ) -> BotrackedBundle:
         '''
             Creates the botracked bundle from validated dependencies.
 
             :param dependencies: The botracked bundle dependencies.
             :return: The assembled BotrackedBundle.
             :exceptions:
-                | ATSValueError: The botracked bundle dependencies must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle dependencies must be an instance of Mapping and its
-                |                attributes must be instances of their respective types.
-                | ATSValueError: The botracked bundle must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
-                |                its attributes must be instances of their respective types.
+                | ATSValueError: If bundle dependencies are missing.
+                | ATSTypeError: If bundle dependencies have invalid types.
         '''
         BotrackedBundleDependenciesValidator.validate(dependencies)
 
         base: BaseBundle = dependencies[BotrackedBundleKeys.DEPENDENCY_BASE]
-        service: IBotService = dependencies[BotrackedBundleKeys.DEPENDENCY_SERVICE]
+        service: BotRuntimeBundle = dependencies[
+            BotrackedBundleKeys.DEPENDENCY_SERVICE
+        ]
         gui: IGUI = dependencies[BotrackedBundleKeys.DEPENDENCY_GUI]
         cli: ICLI = dependencies[BotrackedBundleKeys.DEPENDENCY_CLI]
 

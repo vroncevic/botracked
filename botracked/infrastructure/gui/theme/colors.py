@@ -16,63 +16,65 @@ Copyright
     You should have received a copy of the GNU General Public License along
     with this program. If not, see <http://www.gnu.org/licenses/>.
 Info
-    Defines UI color constants for dark theme cockpit styling.
+    Defines UIColors string enumeration for dark robotics cockpit styling.
 '''
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import ClassVar
+from enum import StrEnum, unique
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
 
-
-@dataclass(slots=True, frozen=True)
-class UIColors:
+@unique
+class UIColors(StrEnum):
     '''
-        Defines class UIColors with attribute(s) and method(s).
-        Palette constants for high-contrast dark robotics cockpit interface.
+        Defines enumeration UIColors for high-contrast dark cockpit interface.
 
         It defines:
 
             :attributes:
-                | BG_DARK - Main background color.
+                | BG_DARK - Main window background color.
                 | BG_PANEL - Secondary panel background color.
                 | BG_HEADER - Header bar background color.
                 | BG_SURFACE - Surface widget background color.
-                | TEXT_MAIN - Primary text color.
-                | TEXT_MUTED - Secondary muted text color.
-                | TEXT_DIM - Dim helper text color.
-                | BORDER - Border divider color.
-                | GREEN - Success/online state color.
-                | RED - Error/offline state color.
-                | AMBER - Warning/standby state color.
-                | BLUE - Accent/information color.
-                | CYAN - Alternative accent color.
-                | PURPLE - Special highlights color.
-            :methods: None.
+                | TEXT_MAIN - Primary text foreground color.
+                | TEXT_MUTED - Secondary muted text foreground color.
+                | TEXT_DIM - Dim helper and timestamp text color.
+                | BORDER - Divider and active button border color.
+                | GREEN - Online and success indicator color.
+                | GREEN_ACTIVE - Active hover color for success buttons.
+                | GREEN_PRESSED - Pressed state color for success buttons.
+                | RED - Offline and fault indicator color.
+                | RED_ACTIVE - Active hover color for danger buttons.
+                | RED_PRESSED - Pressed state color for danger buttons.
+                | AMBER - Warning and hexadecimal stream color.
+                | BLUE - Primary accent color.
+                | CYAN - Secondary accent and header highlight color.
+                | PURPLE - Special highlight token color.
     '''
 
-    BG_DARK: ClassVar[str] = '#1E1E2E'
-    BG_PANEL: ClassVar[str] = '#25263A'
-    BG_HEADER: ClassVar[str] = '#181825'
-    BG_SURFACE: ClassVar[str] = '#313244'
-    TEXT_MAIN: ClassVar[str] = '#CDD6F4'
-    TEXT_MUTED: ClassVar[str] = '#A6ADC8'
-    TEXT_DIM: ClassVar[str] = '#6C7086'
-    BORDER: ClassVar[str] = '#45475A'
-
-    # Telemetry and state indicators
-    GREEN: ClassVar[str] = '#A6E3A1'
-    RED: ClassVar[str] = '#F38BA8'
-    AMBER: ClassVar[str] = '#F9E2AF'
-    BLUE: ClassVar[str] = '#89B4FA'
-    CYAN: ClassVar[str] = '#89DCEB'
-    PURPLE: ClassVar[str] = '#CBA6F7'
+    BG_DARK = '#1E1E2E'
+    BG_PANEL = '#25263A'
+    BG_HEADER = '#181825'
+    BG_SURFACE = '#313244'
+    TEXT_MAIN = '#CDD6F4'
+    TEXT_MUTED = '#A6ADC8'
+    TEXT_DIM = '#6C7086'
+    BORDER = '#45475A'
+    GREEN = '#A6E3A1'
+    GREEN_ACTIVE = '#B5E8B0'
+    GREEN_PRESSED = '#98C379'
+    RED = '#F38BA8'
+    RED_ACTIVE = '#F39CA8'
+    RED_PRESSED = '#E06C75'
+    AMBER = '#F9E2AF'
+    BLUE = '#89B4FA'
+    CYAN = '#89DCEB'
+    PURPLE = '#CBA6F7'

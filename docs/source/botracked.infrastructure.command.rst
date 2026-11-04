@@ -7,11 +7,16 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   botracked.infrastructure.command.command
-   botracked.infrastructure.command.icommand_definition
-   botracked.infrastructure.command.icommand_executor
-   botracked.infrastructure.command.studio_command_definition
-   botracked.infrastructure.command.studio_command_executor
+   botracked.infrastructure.command.bundle
+   botracked.infrastructure.command.definition
+   botracked.infrastructure.command.dependencies
+   botracked.infrastructure.command.executor
+   botracked.infrastructure.command.factory
+   botracked.infrastructure.command.idefinition
+   botracked.infrastructure.command.iexecutor
+   botracked.infrastructure.command.ipreloader
+   botracked.infrastructure.command.preloader
+   botracked.infrastructure.command.provides
 
 Module contents
 ---------------

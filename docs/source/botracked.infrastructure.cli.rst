@@ -15,8 +15,11 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   botracked.infrastructure.cli.dependencies
    botracked.infrastructure.cli.engine
+   botracked.infrastructure.cli.factory
    botracked.infrastructure.cli.icli
+   botracked.infrastructure.cli.provides
 
 Module contents
 ---------------

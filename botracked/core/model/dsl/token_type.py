@@ -21,19 +21,20 @@ Info
 
 from __future__ import annotations
 
-from enum import Enum, auto
+from enum import StrEnum, unique
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
 
 
-class TokenType(Enum):
+@unique
+class TokenType(StrEnum):
     '''
         Lexical token types recognized in .track mission scripts.
 
@@ -62,26 +63,26 @@ class TokenType(Enum):
     '''
 
     # Instructions
-    SPEED = auto()
-    FORWARD = auto()
-    BACKWARD = auto()
-    TURN_LEFT = auto()
-    TURN_RIGHT = auto()
-    SPIN_LEFT = auto()
-    SPIN_RIGHT = auto()
-    WAIT = auto()
-    STOP = auto()
-    PING = auto()
-    CLEAR_ERRORS = auto()
+    SPEED = 'SPEED'
+    FORWARD = 'FORWARD'
+    BACKWARD = 'BACKWARD'
+    TURN_LEFT = 'TURN_LEFT'
+    TURN_RIGHT = 'TURN_RIGHT'
+    SPIN_LEFT = 'SPIN_LEFT'
+    SPIN_RIGHT = 'SPIN_RIGHT'
+    WAIT = 'WAIT'
+    STOP = 'STOP'
+    PING = 'PING'
+    CLEAR_ERRORS = 'CLEAR_ERRORS'
 
     # Control Flow
-    REPEAT = auto()
-    END = auto()
+    REPEAT = 'REPEAT'
+    END = 'END'
 
     # Literals and punctuation
-    NUMBER = auto()
-    IDENTIFIER = auto()
-    COLON = auto()
-    NEWLINE = auto()
-    COMMENT = auto()
-    EOF = auto()
+    NUMBER = 'NUMBER'
+    IDENTIFIER = 'IDENTIFIER'
+    COLON = 'COLON'
+    NEWLINE = 'NEWLINE'
+    COMMENT = 'COMMENT'
+    EOF = 'EOF'
