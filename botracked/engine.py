@@ -34,10 +34,10 @@ from botracked.setup.bundle import BotrackedBundle
 from botracked.setup.validator import BotrackedBundleValidator
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -51,11 +51,11 @@ class Botracked(Base):
 
             :attributes:
                 | _is_initialized - Boolean flag tracking initialization state.
+                | _has_logger - Boolean flag tracking logger availability.
                 | _logger - Logger interface instance from base context.
                 | _cli - CLI adapter contract instance.
             :methods:
                 | __init__ - Initializes engine with adapters and services.
-                | is_initialized - Checks if engine is initialized.
                 | process - Processes botracked CLI or GUI operations.
     '''
 
@@ -74,31 +74,22 @@ class Botracked(Base):
 
         try:
             BotrackedBundleValidator.validate(bundle)
-
-            # Initialize base engine
             super().__init__(bundle.base)
 
-            # Mark as not initialized (waiting for other components to be initialized)
+            self._logger = self.get_context().logger
             self._is_initialized = False
-
-            # Setting up primary inbound adapter (CLI interface)
             self._cli = bundle.cli
 
-            # Mark as initialized (all components initialized)
-            self._is_initialized = all(
-                component.is_initialized()
-                for component in [
-                    bundle.base.option_manager,
-                    bundle.service,
-                    bundle.gui,
-                    self._cli,
-                ]
-                if component
+            self._is_initialized = (
+                bundle.base.option_manager.is_initialized()
+                and bundle.service.is_initialized()
+                and bundle.gui.is_initialized()
+                and self._cli.is_initialized()
             )
 
-            # Setting up logger for tool engine
-            self._logger = self.get_context().logger
-            self._logger.write_log(INFO, '✅ botracked: engine initialized successfully!')
+            self._logger.write_log(
+                INFO, '✅ botracked: engine initialized successfully!'
+            )
 
         except (ATSValueError, ATSTypeError) as exc:
             stdout.write(f'❌ botracked: {exc}!\n')
@@ -114,29 +105,30 @@ class Botracked(Base):
             :return: True if successful, False otherwise.
             :exceptions: None.
         '''
+        result: Mapping[str, object] = {}
+
         try:
-            if not self.is_initialized():
-                self._logger.write_log(ERROR, '❌ botracked: engine not initialized!')
-                return False
+            if self.is_initialized():
+                self._logger.write_log(INFO, '🔥 Starting botracked execution...')
+                result: Mapping[str, object] = self._cli.run()
+                self._logger.write_log(INFO, '✅ Execution finished!')
 
-            if verbose:
-                self._logger.write_log(INFO, '🔍 Verbose mode enabled')
+                if result.get('returncode') != 0:
+                    stderr_msg = result.get('stderr') or 'failed!'
+                    self._logger.write_log(ERROR, f'❌ botracked: {stderr_msg}')
+                    return False
 
-            self._logger.write_log(INFO, '🔥 Starting botracked execution...')
-            result: Mapping[str, object] = self._cli.run()
-            self._logger.write_log(INFO, '✅ Execution finished!')
+                self._logger.write_log(INFO, '✅ bottracked: done!')
+                self._logger.write_log(INFO, '✅ bottracked: exiting successfully!')
+                return True
 
-            if result.get('returncode') != 0:
-                self._logger.write_log(ERROR, f'❌ botracked: {result.get("stderr") or "failed!"}')
-                return False
-
-            self._logger.write_log(INFO, '✅ botracked: done!')
-            return True
+            stdout.write('❌ bottracked: engine not initialized!\n')
+            return False
 
         except (ATSValueError, ATSTypeError) as exc:
-            self._logger.write_log(ERROR, f'❌ botracked: {exc}!')
+            stdout.write(f'❌ bottracked: {exc}!\n')
             return False
 
         except Exception as exc:
-            self._logger.write_log(ERROR, f'❌ botracked unexpected exception: {exc}!')
+            stdout.write(f'❌ bottracked unexpected exception: {exc}!\n')
             return False

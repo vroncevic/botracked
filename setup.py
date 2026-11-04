@@ -23,13 +23,13 @@ from __future__ import annotations
 
 from os import walk
 from os.path import abspath, dirname, join, relpath
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'GNU General Public License (GPL)'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -70,7 +70,7 @@ def find_package_data(pkg: str) -> list[str]:
 
 setup(
     name='botracked',
-    version='1.0.1',
+    version='1.0.2',
     description='Tracked Robot Navigation Cockpit, Telemetry Monitor and Mission Scripting Suite.',
     author='Vladimir Roncevic',
     author_email='elektron.ronca@gmail.com',
@@ -82,12 +82,6 @@ setup(
     platforms='POSIX',
     classifiers=PYP_CLASSIFIERS,
     packages=find_packages(exclude=['tests', 'tests.*', '*.*.pyc', '*.pyo']),
-    py_modules=['main'],
     install_requires=['ats-utilities', 'pyserial'],
-    package_data={'botracked': find_package_data('botracked')},
-    entry_points={
-        'console_scripts': [
-            'botracked=main:main'
-        ]
-    }
+    package_data={'botracked': find_package_data('botracked')}
 )

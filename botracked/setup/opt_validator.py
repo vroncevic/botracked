@@ -31,14 +31,13 @@ from botracked.setup.keys import BotrackedBundleKeys
 from botracked.setup.options import BotrackedBundleOptions
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
-
 
 class BotrackedBundleOptionsValidator:
     '''
@@ -58,24 +57,32 @@ class BotrackedBundleOptionsValidator:
 
             :param options: The bundle options to be validated.
             :exceptions:
-                | ATSValueError: The botracked bundle options must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle options must be an instance of Mapping and its
-                |                attributes must be instances of their respective types.
+                | ATSValueError: If bundle options are missing.
+                | ATSTypeError: If bundle options have invalid types.
         '''
         ctx: str = 'botracked_bundle_options_validator::validate(...)'
-        msg_options_none: str = 'the botracked bundle options must be provided'
-        msg_options_istype: str = 'the botracked bundle options must be a Mapping'
+        not_none(
+            options, ctx, 'the botracked bundle options must be provided'
+        )
+        istype(
+            options,
+            Mapping,
+            ctx,
+            'the botracked bundle options must be a Mapping',
+        )
 
-        not_none(options, ctx, msg_options_none)
-        istype(options, Mapping, ctx, msg_options_istype)
-
-        for attr_name, expected_type in BotrackedBundleKeys.get_option_to_type().items():
+        opt_types = BotrackedBundleKeys.get_option_to_type()
+        for attr_name, expected_type in opt_types.items():
             if attr_name in options:
-                msg_attr_name_istype: str = (
-                    f'the {attr_name.replace("_", " ")} must be an instance of {expected_type.__name__}'
-                )
+                label: str = attr_name.replace('_', ' ')
                 attribute = options.get(attr_name)
-                istype(attribute, expected_type, ctx, msg_attr_name_istype)
+                istype(
+                    attribute,
+                    expected_type,
+                    ctx,
+                    f'the {label} must be an instance of '
+                    f'{expected_type.__name__}',
+                )
 
     @classmethod
     def is_valid(cls, options: BotrackedBundleOptions) -> bool:
@@ -89,6 +96,5 @@ class BotrackedBundleOptionsValidator:
         try:
             cls.validate(options)
             return True
-
         except (ATSValueError, ATSTypeError):
             return False

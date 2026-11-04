@@ -26,20 +26,19 @@ from ats_utilities.exceptions import ATSTypeError, ATSValueError
 from ats_utilities.validation.check_type import istype
 from ats_utilities.validation.check_value import not_none
 
-from botracked.core.service.ibot_service import IBotService
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
 from botracked.infrastructure.cli.icli import ICLI
 from botracked.infrastructure.gui.igui import IGUI
 from botracked.setup.bundle import BotrackedBundle
 
 __author__ = 'Vladimir Roncevic'
-__copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
+__copyright__ = 'Copyright (C) 2026 Vladimir Roncevic <elektron.ronca@gmail.com>'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
-
 
 class BotrackedBundleValidator:
     '''
@@ -59,34 +58,37 @@ class BotrackedBundleValidator:
 
             :param bundle: The bundle to validate.
             :exceptions:
-                | ATSValueError: The botracked bundle must be provided and have proper values.
-                | ATSTypeError:  The botracked bundle must be an instance of BotrackedBundle and
-                |                its attributes must be instances of their respective types.
+                | ATSValueError: If bundle or required attributes are missing.
+                | ATSTypeError: If bundle or attributes have invalid types.
         '''
         ctx: str = 'botracked_bundle_validator::validate(...)'
-        msg_bundle_none: str = 'the botracked bundle must be provided'
-        msg_base_none: str = 'the base bundle must be provided'
-        msg_service_none: str = 'the service must be provided'
-        msg_gui_none: str = 'the gui must be provided'
-        msg_cli_none: str = 'the cli must be provided'
-        msg_bundle_istype: str = 'the botracked bundle must be an instance of BotrackedBundle'
-        msg_base_istype: str = 'the base bundle must be an instance of BaseBundle'
-        msg_service_istype: str = 'the service must be an instance of IBotService'
-        msg_gui_istype: str = 'the gui must be an instance of IGUI'
-        msg_cli_istype: str = 'the cli must be an instance of ICLI'
+        not_none(bundle, ctx, 'the botracked bundle must be provided')
+        istype(
+            bundle,
+            BotrackedBundle,
+            ctx,
+            'the botracked bundle must be an instance of BotrackedBundle',
+        )
 
-        not_none(bundle, ctx, msg_bundle_none)
-        istype(bundle, BotrackedBundle, ctx, msg_bundle_istype)
+        not_none(bundle.base, ctx, 'the base bundle must be provided')
+        not_none(bundle.service, ctx, 'the service must be provided')
+        not_none(bundle.gui, ctx, 'the gui must be provided')
+        not_none(bundle.cli, ctx, 'the cli must be provided')
 
-        not_none(bundle.base, ctx, msg_base_none)
-        not_none(bundle.service, ctx, msg_service_none)
-        not_none(bundle.gui, ctx, msg_gui_none)
-        not_none(bundle.cli, ctx, msg_cli_none)
-
-        istype(bundle.base, BaseBundle, ctx, msg_base_istype)
-        istype(bundle.service, IBotService, ctx, msg_service_istype)
-        istype(bundle.gui, IGUI, ctx, msg_gui_istype)
-        istype(bundle.cli, ICLI, ctx, msg_cli_istype)
+        istype(
+            bundle.base,
+            BaseBundle,
+            ctx,
+            'the base bundle must be an instance of BaseBundle',
+        )
+        istype(
+            bundle.service,
+            BotRuntimeBundle,
+            ctx,
+            'the service must be an instance of BotRuntimeBundle',
+        )
+        istype(bundle.gui, IGUI, ctx, 'the gui must be an instance of IGUI')
+        istype(bundle.cli, ICLI, ctx, 'the cli must be an instance of ICLI')
 
     @classmethod
     def is_valid(cls, bundle: BotrackedBundle) -> bool:
@@ -100,6 +102,5 @@ class BotrackedBundleValidator:
         try:
             cls.validate(bundle)
             return True
-
         except (ATSValueError, ATSTypeError):
             return False

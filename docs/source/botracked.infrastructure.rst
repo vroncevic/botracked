@@ -8,9 +8,12 @@ Subpackages
    :maxdepth: 4
 
    botracked.infrastructure.cli
+   botracked.infrastructure.codec
    botracked.infrastructure.command
-   botracked.infrastructure.communication
+   botracked.infrastructure.concurrency
+   botracked.infrastructure.connection
    botracked.infrastructure.gui
+   botracked.infrastructure.preset
 
 Module contents
 ---------------

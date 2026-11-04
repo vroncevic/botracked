@@ -21,18 +21,19 @@ Info
 
 from __future__ import annotations
 
-from enum import IntEnum
+from enum import IntEnum, unique
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
 
 
+@unique
 class ProtocolOpcode(IntEnum):
     '''
         Binary protocol message IDs matching tracked_bot firmware packet definitions.
@@ -52,9 +53,6 @@ class ProtocolOpcode(IntEnum):
                 | RESP_PONG - Opcode responding to link heartbeat ping.
                 | RESP_STATUS - Opcode returning 7-byte operational telemetry report.
                 | RESP_DIAG - Opcode returning 9-byte system diagnostics report.
-            :methods:
-                | is_response - Checks if opcode is an inbound response from the robot.
-                | label - Returns human-readable mnemonic for the opcode.
     '''
 
     # Commands from Host to Robot
@@ -72,38 +70,3 @@ class ProtocolOpcode(IntEnum):
     RESP_PONG = 0x84
     RESP_STATUS = 0x90
     RESP_DIAG = 0x91
-
-    @property
-    def is_response(self) -> bool:
-        '''
-            Checks if the opcode is an inbound response from the robot.
-
-            :return: True if response, False if command.
-            :exceptions: None.
-        '''
-        return bool(self.value & 0x80)
-
-    @property
-    def label(self) -> str:
-        '''
-            Returns human-readable mnemonic for the opcode.
-
-            :return: Opcode label string.
-            :exceptions: None.
-        '''
-        labels: dict[int, str] = {
-            0x01: 'CMD_MOTION',
-            0x02: 'CMD_SET_SPEED',
-            0x03: 'CMD_STOP',
-            0x04: 'CMD_PING',
-            0x10: 'CMD_GET_STATUS',
-            0x11: 'CMD_GET_DIAG',
-            0x12: 'CMD_ERR_CLEAR',
-            0x80: 'RESP_ACK',
-            0x81: 'RESP_NACK',
-            0x84: 'RESP_PONG',
-            0x90: 'RESP_STATUS',
-            0x91: 'RESP_DIAG',
-        }
-
-        return labels.get(self.value, f'0x{self.value:02X}')

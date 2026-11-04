@@ -120,50 +120,255 @@ Tool structure
          │   ├── __init__.py
          │   ├── model/
          │   │   ├── connection_params.py
+         │   │   ├── connection_preference.py
          │   │   ├── dsl/
          │   │   │   ├── ast_instruction.py
          │   │   │   ├── compiled_step.py
          │   │   │   ├── __init__.py
          │   │   │   ├── token.py
          │   │   │   └── token_type.py
+         │   │   ├── exceptions/
+         │   │   │   ├── botracked_error.py
+         │   │   │   ├── codec_error.py
+         │   │   │   ├── connection_error.py
+         │   │   │   ├── dsl_error.py
+         │   │   │   ├── dsl_syntax_error.py
+         │   │   │   ├── port_disconnected_error.py
+         │   │   │   ├── preferences_error.py
+         │   │   │   ├── preset_error.py
+         │   │   │   ├── queue_empty_error.py
+         │   │   │   ├── receiver_error.py
+         │   │   │   └── transmitter_error.py
          │   │   ├── __init__.py
          │   │   ├── motion_command.py
+         │   │   ├── motor_state.py
+         │   │   ├── packet_direction.py
          │   │   ├── protocol_opcode.py
+         │   │   ├── system_mode.py
          │   │   └── telemetry_data.py
          │   └── service/
-         │       ├── bot_motion_service.py
-         │       ├── bot_service.py
-         │       ├── bot_telemetry_service.py
-         │       ├── communication/
-         │       │   ├── ibinary_codec.py
-         │       │   ├── ibot_transport.py
-         │       │   ├── icrc8_calculator.py
+         │       ├── bundle/
          │       │   ├── __init__.py
-         │       │   └── itelemetry_observer.py
+         │       │   ├── runners.py
+         │       │   ├── runtime.py
+         │       │   └── services.py
+         │       ├── codec/
+         │       │   ├── crc/
+         │       │   │   ├── icalculator.py
+         │       │   │   └── __init__.py
+         │       │   ├── icodec.py
+         │       │   └── __init__.py
+         │       ├── concurrency/
+         │       │   ├── iclock.py
+         │       │   ├── icontroller.py
+         │       │   ├── iflag.py
+         │       │   ├── __init__.py
+         │       │   ├── irunnable.py
+         │       │   └── irunner.py
+         │       ├── connection/
+         │       │   ├── buffer/
+         │       │   │   ├── __init__.py
+         │       │   │   └── iqueue.py
+         │       │   ├── dependencies.py
+         │       │   ├── dispatcher/
+         │       │   │   ├── dependencies.py
+         │       │   │   ├── dispatcher.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── idispatcher.py
+         │       │   │   ├── __init__.py
+         │       │   │   └── provides.py
+         │       │   ├── factory.py
+         │       │   ├── __init__.py
+         │       │   ├── iservice.py
+         │       │   ├── port/
+         │       │   │   ├── __init__.py
+         │       │   │   ├── iport.py
+         │       │   │   └── istatus.py
+         │       │   ├── preferences/
+         │       │   │   ├── __init__.py
+         │       │   │   └── irepository.py
+         │       │   ├── provides.py
+         │       │   ├── receiver/
+         │       │   │   ├── dependencies.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── protocol/
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   ├── ireader.py
+         │       │   │   │   └── ireceiver.py
+         │       │   │   ├── provides.py
+         │       │   │   └── task.py
+         │       │   ├── scanner/
+         │       │   │   ├── __init__.py
+         │       │   │   └── iscanner.py
+         │       │   ├── service.py
+         │       │   ├── transmitter/
+         │       │   │   ├── dependencies.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── protocol/
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   ├── itransmitter.py
+         │       │   │   │   └── iwriter.py
+         │       │   │   ├── provides.py
+         │       │   │   └── task.py
+         │       │   └── worker/
+         │       │       ├── dependencies.py
+         │       │       ├── factory.py
+         │       │       ├── __init__.py
+         │       │       ├── iworker.py
+         │       │       ├── loop/
+         │       │       │   ├── iloop.py
+         │       │       │   ├── __init__.py
+         │       │       │   └── loop.py
+         │       │       ├── provides.py
+         │       │       ├── task/
+         │       │       │   ├── __init__.py
+         │       │       │   ├── itask.py
+         │       │       │   └── task.py
+         │       │       └── worker.py
          │       ├── dsl/
+         │       │   ├── compiler/
+         │       │   │   ├── compiler.py
+         │       │   │   ├── dependencies.py
+         │       │   │   ├── estimator/
+         │       │   │   │   ├── estimator.py
+         │       │   │   │   ├── iestimator.py
+         │       │   │   │   └── __init__.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── icompiler.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── motion/
+         │       │   │   │   ├── imotion.py
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   └── motion.py
+         │       │   │   ├── node/
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   ├── inode.py
+         │       │   │   │   ├── node.py
+         │       │   │   │   └── state.py
+         │       │   │   └── provides.py
+         │       │   ├── dependencies.py
+         │       │   ├── factory.py
          │       │   ├── __init__.py
-         │       │   ├── itbot_compiler.py
-         │       │   ├── itbot_dsl_service.py
-         │       │   ├── itbot_lexer.py
-         │       │   ├── itbot_parser.py
-         │       │   ├── tbot_compiler.py
-         │       │   ├── tbot_dsl_service.py
-         │       │   ├── tbot_lexer.py
-         │       │   └── tbot_parser.py
-         │       ├── ibot_connection_service.py
-         │       ├── ibot_mission_service.py
-         │       ├── ibot_motion_service.py
-         │       ├── ibot_service.py
-         │       ├── ibot_telemetry_service.py
+         │       │   ├── iservice.py
+         │       │   ├── lexer/
+         │       │   │   ├── factory.py
+         │       │   │   ├── identifier/
+         │       │   │   │   ├── identifier.py
+         │       │   │   │   ├── iidentifier.py
+         │       │   │   │   └── __init__.py
+         │       │   │   ├── ilexer.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── lexer.py
+         │       │   │   ├── number/
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   ├── inumber.py
+         │       │   │   │   └── number.py
+         │       │   │   └── provides.py
+         │       │   ├── parser/
+         │       │   │   ├── cursor/
+         │       │   │   │   ├── cursor.py
+         │       │   │   │   ├── icursor.py
+         │       │   │   │   └── __init__.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── iparser.py
+         │       │   │   ├── parser.py
+         │       │   │   ├── provides.py
+         │       │   │   └── statement/
+         │       │   │       ├── __init__.py
+         │       │   │       ├── istatement.py
+         │       │   │       └── statement.py
+         │       │   ├── preset/
+         │       │   │   ├── __init__.py
+         │       │   │   └── irepository.py
+         │       │   ├── provides.py
+         │       │   └── service.py
          │       ├── __init__.py
-         │       ├── mission_runner.py
-         │       └── telemetry_poller.py
+         │       ├── motion/
+         │       │   ├── dependencies.py
+         │       │   ├── factory.py
+         │       │   ├── __init__.py
+         │       │   ├── iservice.py
+         │       │   ├── protocol/
+         │       │   │   ├── iactuator.py
+         │       │   │   └── __init__.py
+         │       │   ├── provides.py
+         │       │   ├── runner/
+         │       │   │   ├── dependencies.py
+         │       │   │   ├── factory.py
+         │       │   │   ├── __init__.py
+         │       │   │   ├── irunner.py
+         │       │   │   ├── pacer/
+         │       │   │   │   ├── dependencies.py
+         │       │   │   │   ├── factory.py
+         │       │   │   │   ├── __init__.py
+         │       │   │   │   ├── ipacer.py
+         │       │   │   │   ├── pacer.py
+         │       │   │   │   └── provides.py
+         │       │   │   ├── provides.py
+         │       │   │   ├── runner.py
+         │       │   │   └── worker/
+         │       │   │       ├── dependencies.py
+         │       │   │       ├── factory.py
+         │       │   │       ├── __init__.py
+         │       │   │       ├── iworker.py
+         │       │   │       ├── provides.py
+         │       │   │       └── worker.py
+         │       │   └── service.py
+         │       └── telemetry/
+         │           ├── factory.py
+         │           ├── __init__.py
+         │           ├── inspector/
+         │           │   ├── dependencies.py
+         │           │   ├── factory.py
+         │           │   ├── iinspector.py
+         │           │   ├── __init__.py
+         │           │   ├── inspector.py
+         │           │   └── provides.py
+         │           ├── iservice.py
+         │           ├── listener/
+         │           │   ├── decoder/
+         │           │   │   ├── decoder.py
+         │           │   │   ├── idecoder.py
+         │           │   │   └── __init__.py
+         │           │   ├── dependencies.py
+         │           │   ├── factory.py
+         │           │   ├── ilistener.py
+         │           │   ├── __init__.py
+         │           │   ├── listener.py
+         │           │   ├── loop/
+         │           │   │   ├── iloop.py
+         │           │   │   ├── __init__.py
+         │           │   │   └── loop.py
+         │           │   └── provides.py
+         │           ├── poller/
+         │           │   ├── dependencies.py
+         │           │   ├── factory.py
+         │           │   ├── __init__.py
+         │           │   ├── ipoller.py
+         │           │   ├── loop/
+         │           │   │   ├── iloop.py
+         │           │   │   ├── __init__.py
+         │           │   │   └── loop.py
+         │           │   ├── poller.py
+         │           │   └── provides.py
+         │           ├── protocol/
+         │           │   ├── __init__.py
+         │           │   ├── iobserver.py
+         │           │   └── isink.py
+         │           ├── provides.py
+         │           └── service.py
          ├── engine.py
          ├── infrastructure/
          │   ├── cli/
+         │   │   ├── dependencies.py
          │   │   ├── engine.py
+         │   │   ├── factory.py
          │   │   ├── icli.py
          │   │   ├── __init__.py
+         │   │   ├── provides.py
          │   │   └── setup/
          │   │       ├── bundle.py
          │   │       ├── dep_validator.py
@@ -175,82 +380,393 @@ Tool structure
          │   │       ├── options.py
          │   │       ├── registry.py
          │   │       └── validator.py
+         │   ├── codec/
+         │   │   ├── codec.py
+         │   │   ├── crc/
+         │   │   │   ├── calculator.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   └── provides.py
+         │   │   ├── dependencies.py
+         │   │   ├── factory.py
+         │   │   ├── __init__.py
+         │   │   └── provides.py
          │   ├── command/
-         │   │   ├── command.py
-         │   │   ├── icommand_definition.py
-         │   │   ├── icommand_executor.py
+         │   │   ├── bundle.py
+         │   │   ├── definition.py
+         │   │   ├── dependencies.py
+         │   │   ├── executor.py
+         │   │   ├── factory.py
+         │   │   ├── idefinition.py
+         │   │   ├── iexecutor.py
          │   │   ├── __init__.py
-         │   │   ├── studio_command_definition.py
-         │   │   └── studio_command_executor.py
-         │   ├── communication/
-         │   │   ├── binary_codec.py
-         │   │   ├── crc8_calculator.py
+         │   │   ├── ipreloader.py
+         │   │   ├── preloader.py
+         │   │   └── provides.py
+         │   ├── concurrency/
+         │   │   ├── clock/
+         │   │   │   ├── clock.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   └── provides.py
+         │   │   ├── controller/
+         │   │   │   ├── controller.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   └── provides.py
+         │   │   ├── flag/
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   └── provides.py
          │   │   ├── __init__.py
-         │   │   ├── preferences/
-         │   │   │   ├── connection_preferences_repository.py
-         │   │   │   └── __init__.py
-         │   │   ├── serial_transport.py
-         │   │   └── tcp_transport.py
+         │   │   └── runner/
+         │   │       ├── cycle/
+         │   │       │   ├── cycle.py
+         │   │       │   ├── icycle.py
+         │   │       │   └── __init__.py
+         │   │       ├── dependencies.py
+         │   │       ├── factory.py
+         │   │       ├── iexecutor.py
+         │   │       ├── __init__.py
+         │   │       ├── provides.py
+         │   │       └── runner.py
          │   ├── config/
          │   │   ├── botracked.cfg
-         │   │   ├── botracked.logo
-         │   │   └── scheme.json
+         │   │   └── botracked.logo
+         │   ├── connection/
+         │   │   ├── buffer/
+         │   │   │   ├── byte_queue.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── iraw_queue.py
+         │   │   │   └── provides.py
+         │   │   ├── driver/
+         │   │   │   ├── control.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── driver.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── idriver.py
+         │   │   │   ├── ilock.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── iraw_control.py
+         │   │   │   ├── iraw_io.py
+         │   │   │   └── provides.py
+         │   │   ├── __init__.py
+         │   │   ├── port/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── provides.py
+         │   │   │   └── serial.py
+         │   │   ├── preferences/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── istorage.py
+         │   │   │   ├── provides.py
+         │   │   │   ├── repository.py
+         │   │   │   └── storage.py
+         │   │   ├── receiver/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── provides.py
+         │   │   │   └── serial.py
+         │   │   ├── scanner/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── provides.py
+         │   │   │   └── scanner.py
+         │   │   └── transmitter/
+         │   │       ├── dependencies.py
+         │   │       ├── factory.py
+         │   │       ├── __init__.py
+         │   │       ├── provides.py
+         │   │       └── serial.py
          │   ├── gui/
          │   │   ├── connection/
-         │   │   │   ├── connection_callbacks.py
-         │   │   │   ├── connection_panel.py
-         │   │   │   ├── connection_panel_config.py
-         │   │   │   └── __init__.py
-         │   │   ├── controls/
+         │   │   │   ├── adapter/
+         │   │   │   │   ├── adapter.py
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   └── provides.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── idelegate.py
          │   │   │   ├── __init__.py
-         │   │   │   ├── jog_panel.py
-         │   │   │   ├── jog_panel_callbacks.py
-         │   │   │   └── jog_panel_config.py
-         │   │   ├── editor/
-         │   │   │   ├── dsl_editor_panel.py
-         │   │   │   ├── dsl_editor_panel_config.py
-         │   │   │   ├── dsl_preset_loader.py
-         │   │   │   ├── dsl_syntax_highlighter.py
-         │   │   │   ├── dsl_syntax_highlighter_config.py
+         │   │   │   ├── ipanel.py
+         │   │   │   ├── iport_delegate.py
+         │   │   │   ├── panel.py
+         │   │   │   ├── provides.py
+         │   │   │   ├── serial/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   └── status/
+         │   │   │       ├── dependencies.py
+         │   │   │       ├── factory.py
+         │   │   │       ├── ilistener.py
+         │   │   │       ├── __init__.py
+         │   │   │       ├── isection.py
+         │   │   │       ├── provides.py
+         │   │   │       └── section.py
+         │   │   ├── console/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
          │   │   │   ├── __init__.py
-         │   │   │   └── mission_callbacks.py
-         │   │   ├── engine.py
-         │   │   ├── gui_config.py
-         │   │   ├── gui_event_mediator.py
+         │   │   │   ├── ipanel.py
+         │   │   │   ├── observer/
+         │   │   │   │   ├── ilistener.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   └── isink.py
+         │   │   │   ├── panel.py
+         │   │   │   ├── provides.py
+         │   │   │   ├── stream/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   └── toolbar/
+         │   │   │       ├── dependencies.py
+         │   │   │       ├── factory.py
+         │   │   │       ├── __init__.py
+         │   │   │       ├── isection.py
+         │   │   │       ├── provides.py
+         │   │   │       └── section.py
          │   │   ├── igui.py
          │   │   ├── __init__.py
-         │   │   ├── stream/
+         │   │   ├── layout/
+         │   │   │   ├── builder.py
+         │   │   │   ├── bundle.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── ibuilder.py
          │   │   │   ├── __init__.py
-         │   │   │   ├── log_panel.py
-         │   │   │   └── log_panel_config.py
+         │   │   │   ├── provides.py
+         │   │   │   └── slots.py
+         │   │   ├── lifecycle/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── irunner.py
+         │   │   │   ├── provides.py
+         │   │   │   └── runner.py
+         │   │   ├── mission/
+         │   │   │   ├── adapter/
+         │   │   │   │   ├── adapter.py
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   └── provides.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── editor/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── idelegate.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── ipanel.py
+         │   │   │   ├── panel.py
+         │   │   │   ├── playback/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   ├── preset/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   ├── provides.py
+         │   │   │   ├── status/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   ├── syntax/
+         │   │   │   │   ├── config.py
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── highlighter/
+         │   │   │   │   │   ├── highlighter.py
+         │   │   │   │   │   ├── ihighlighter.py
+         │   │   │   │   │   └── __init__.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── matcher/
+         │   │   │   │   │   ├── imatcher.py
+         │   │   │   │   │   ├── __init__.py
+         │   │   │   │   │   └── matcher.py
+         │   │   │   │   └── provides.py
+         │   │   │   └── toolbar/
+         │   │   │       ├── dependencies.py
+         │   │   │       ├── factory.py
+         │   │   │       ├── __init__.py
+         │   │   │       ├── isection.py
+         │   │   │       ├── provides.py
+         │   │   │       └── section.py
+         │   │   ├── motion/
+         │   │   │   ├── adapter/
+         │   │   │   │   ├── adapter.py
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   └── provides.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── dpad/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   ├── section.py
+         │   │   │   │   └── trigger/
+         │   │   │   │       ├── __init__.py
+         │   │   │   │       ├── itrigger.py
+         │   │   │   │       └── trigger.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── idelegate.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── ipanel.py
+         │   │   │   ├── keyboard/
+         │   │   │   │   ├── controller/
+         │   │   │   │   │   ├── controller.py
+         │   │   │   │   │   ├── icontroller.py
+         │   │   │   │   │   └── __init__.py
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   └── provides.py
+         │   │   │   ├── panel.py
+         │   │   │   ├── provides.py
+         │   │   │   └── speed/
+         │   │   │       ├── dependencies.py
+         │   │   │       ├── factory.py
+         │   │   │       ├── __init__.py
+         │   │   │       ├── isection.py
+         │   │   │       ├── provides.py
+         │   │   │       └── section.py
+         │   │   ├── session/
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── isession.py
+         │   │   │   ├── provides.py
+         │   │   │   └── session.py
          │   │   ├── telemetry/
+         │   │   │   ├── card/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── isection.py
+         │   │   │   │   ├── provides.py
+         │   │   │   │   └── section.py
+         │   │   │   ├── config.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
          │   │   │   ├── __init__.py
-         │   │   │   ├── telemetry_panel.py
-         │   │   │   └── telemetry_panel_config.py
-         │   │   └── theme/
-         │   │       ├── colors.py
+         │   │   │   ├── ipanel.py
+         │   │   │   ├── iview.py
+         │   │   │   ├── observer/
+         │   │   │   │   ├── dependencies.py
+         │   │   │   │   ├── factory.py
+         │   │   │   │   ├── __init__.py
+         │   │   │   │   ├── observer.py
+         │   │   │   │   └── provides.py
+         │   │   │   ├── panel.py
+         │   │   │   └── provides.py
+         │   │   ├── theme/
+         │   │   │   ├── colors.py
+         │   │   │   ├── controls/
+         │   │   │   │   ├── controls.py
+         │   │   │   │   ├── icontrols.py
+         │   │   │   │   └── __init__.py
+         │   │   │   ├── dependencies.py
+         │   │   │   ├── factory.py
+         │   │   │   ├── iconfigurator.py
+         │   │   │   ├── __init__.py
+         │   │   │   ├── provides.py
+         │   │   │   └── style.py
+         │   │   └── window/
+         │   │       ├── config.py
+         │   │       ├── configurator.py
+         │   │       ├── dependencies.py
+         │   │       ├── factory.py
+         │   │       ├── iconfigurator.py
          │   │       ├── __init__.py
-         │   │       └── style.py
-         │   └── __init__.py
+         │   │       └── provides.py
+         │   ├── __init__.py
+         │   └── preset/
+         │       ├── dependencies.py
+         │       ├── factory.py
+         │       ├── __init__.py
+         │       ├── provides.py
+         │       └── repository.py
          ├── __init__.py
          └── setup/
              ├── bundle.py
              ├── dep_validator.py
              ├── dependencies.py
              ├── factory.py
+             ├── gui/
+             │   ├── cockpit/
+             │   │   ├── dependencies.py
+             │   │   ├── factory.py
+             │   │   ├── __init__.py
+             │   │   └── provides.py
+             │   ├── connection/
+             │   │   ├── dependencies.py
+             │   │   ├── factory.py
+             │   │   └── __init__.py
+             │   ├── dependencies.py
+             │   ├── factory.py
+             │   ├── __init__.py
+             │   ├── launcher.py
+             │   └── mission/
+             │       ├── dependencies.py
+             │       ├── factory.py
+             │       └── __init__.py
              ├── __init__.py
              ├── keys.py
              ├── opt_validator.py
              ├── options.py
              ├── registry.py
+             ├── service/
+             │   ├── connection.py
+             │   ├── connection_provides.py
+             │   ├── dsl.py
+             │   ├── factory.py
+             │   ├── __init__.py
+             │   ├── mission.py
+             │   ├── motion.py
+             │   └── telemetry.py
              └── validator.py
 
-     22 directories, 107 files
+     111 directories, 534 files
 
 ✨ Features
 -----------
 
-* **Dual Transport Support**: Multi-channel USB Serial (``/dev/ttyUSB0`` @ 115200 baud) and low-latency TCP Socket (``127.0.0.1:8888`` or WiFi IP) streaming.
+* **Hardware Serial Transport**: High-reliability USB Serial UART communication (``/dev/ttyUSB0`` @ 115200 baud) directly interfacing with onboard robot microcontroller.
 * **Interactive Jog & Navigation Cockpit**: Real-time D-Pad buttons for Forward, Backward, Skid-Turns, In-Place Spins, and instant Emergency Stop with keyboard key bindings (``W``, ``A``, ``S``, ``D``, ``Q``, ``E``, ``Space``).
 * **Tracked Robot Mission DSL (`.track`)**: Full declarative scripting pipeline featuring lexical tokenizer, syntax parser, AST builder, and binary opcode compiler with Step, Run, Pause, and Resume execution controls.
 * **Real-Time Telemetry Dashboard**: Live monitoring of system operational mode (``NORMAL``, ``DEGRADED``, ``PANIC``), kinematic track speeds, hardware fault counters, motor lock status, and round-trip ping latency.

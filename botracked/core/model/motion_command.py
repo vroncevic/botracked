@@ -21,18 +21,19 @@ Info
 
 from __future__ import annotations
 
-from enum import IntEnum
+from enum import IntEnum, unique
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
 
 
+@unique
 class MotionCommand(IntEnum):
     '''
         Discrete kinematic motion commands for dual-track differential chassis.
@@ -47,9 +48,6 @@ class MotionCommand(IntEnum):
                 | TURN_RIGHT - Differential turn to the right.
                 | SPIN_LEFT - Counter-rotate tracks left in place.
                 | SPIN_RIGHT - Counter-rotate tracks right in place.
-            :methods:
-                | label - Returns human-readable label for GUI display.
-                | from_string - Parses command string into MotionCommand enum.
     '''
 
     STOP = 0
@@ -59,41 +57,3 @@ class MotionCommand(IntEnum):
     TURN_RIGHT = 4
     SPIN_LEFT = 5
     SPIN_RIGHT = 6
-
-    @property
-    def label(self) -> str:
-        '''
-            Returns human-readable label for GUI display.
-
-            :return: String representation of command.
-            :exceptions: None.
-        '''
-        labels: dict[int, str] = {
-            0: 'STOP',
-            1: 'FORWARD',
-            2: 'BACKWARD',
-            3: 'TURN LEFT',
-            4: 'TURN RIGHT',
-            5: 'SPIN LEFT',
-            6: 'SPIN RIGHT',
-        }
-
-        return labels.get(self.value, 'UNKNOWN')
-
-    @classmethod
-    def from_string(cls, name: str) -> MotionCommand:
-        '''
-            Parses command string into MotionCommand enum.
-
-            :param name: Command name string.
-            :return: Corresponding MotionCommand member.
-            :exceptions:
-                | ValueError: If string does not match any command.
-        '''
-        normalized: str = name.strip().upper()
-
-        for member in cls:
-            if normalized in (member.name, member.label):
-                return member
-
-        raise ValueError(f'Unknown motion command: {name}')

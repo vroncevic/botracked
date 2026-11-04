@@ -25,4 +25,5 @@ htmlcov/
 *.report
 *.xml
 botracked.json
+.issues/
 

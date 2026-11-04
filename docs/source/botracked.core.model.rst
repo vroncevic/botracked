@@ -16,8 +16,12 @@ Submodules
    :maxdepth: 4
 
    botracked.core.model.connection_params
+   botracked.core.model.connection_preference
    botracked.core.model.motion_command
+   botracked.core.model.motor_state
+   botracked.core.model.packet_direction
    botracked.core.model.protocol_opcode
+   botracked.core.model.system_mode
    botracked.core.model.telemetry_data
 
 Module contents

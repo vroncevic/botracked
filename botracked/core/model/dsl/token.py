@@ -29,7 +29,7 @@ __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -45,39 +45,12 @@ class Token:
 
             :attributes:
                 | token_type - Categorized token type.
-                | lexeme - Raw text slice representing the token.
-                | value - Parsed literal value or None.
+                | value - Lexeme string representing the token.
                 | line - 1-based source code line number.
                 | column - 1-based source code column number.
-            :methods:
-                | matches - Checks if token matches the given token type.
-                | __repr__ - Returns string representation for diagnostics.
     '''
 
     token_type: TokenType
-    lexeme: str
-    value: int | float | str | None
+    value: str
     line: int
     column: int
-
-    def matches(self, token_type: TokenType) -> bool:
-        '''
-            Checks whether token matches the specified token type.
-
-            :param token_type: Token type to compare against.
-            :return: True if token type matches, False otherwise.
-            :exceptions: None.
-        '''
-        return self.token_type == token_type
-
-    def __repr__(self) -> str:
-        '''
-            Returns string representation for diagnostics.
-
-            :return: Diagnostic string representation of token.
-            :exceptions: None.
-        '''
-        return (
-            f'Token({self.token_type.name}, lexeme={self.lexeme!r}, '
-            f'val={self.value!r}, L{self.line}:C{self.column})'
-        )

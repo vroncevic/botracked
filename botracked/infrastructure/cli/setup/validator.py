@@ -28,14 +28,14 @@ from ats_utilities.option.imanager import IOptionManager
 from ats_utilities.validation.check_type import istype
 from ats_utilities.validation.check_value import not_none
 
-from botracked.core.service.bot_service import BotService
+from botracked.core.service.bundle.runtime import BotRuntimeBundle
 from botracked.infrastructure.cli.setup.bundle import CLIBundle
 
 __author__ = 'Vladimir Roncevic'
 __copyright__ = '(C) 2026, https://vroncevic.github.io/botracked'
 __credits__ = ['Vladimir Roncevic', 'Python Software Foundation']
 __license__ = 'https://github.com/vroncevic/botracked/blob/dev/LICENSE'
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 __maintainer__ = 'Vladimir Roncevic'
 __email__ = 'elektron.ronca@gmail.com'
 __status__ = 'Updated'
@@ -69,7 +69,7 @@ class CLIBundleValidator:
         msg_parser_none: str = 'the parser must be provided'
         msg_commands_none: str = 'the commands sequence must be provided'
         msg_bundle_istype: str = 'the cli bundle must be an instance of CLIBundle'
-        msg_service_istype: str = 'the service must be an instance of BotService'
+        msg_service_istype: str = 'the service must be an instance of BotRuntimeBundle'
         msg_parser_istype: str = 'the parser must be an instance of IOptionManager'
         msg_commands_istype: str = 'the commands sequence must be an instance of Sequence'
 
@@ -80,7 +80,7 @@ class CLIBundleValidator:
         not_none(bundle.parser, ctx, msg_parser_none)
         not_none(bundle.commands, ctx, msg_commands_none)
 
-        istype(bundle.service, BotService, ctx, msg_service_istype)
+        istype(bundle.service, BotRuntimeBundle, ctx, msg_service_istype)
         istype(bundle.parser, IOptionManager, ctx, msg_parser_istype)
         istype(bundle.commands, Sequence, ctx, msg_commands_istype)
 
