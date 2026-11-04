@@ -839,7 +839,7 @@ flowchart TD
     MIS -.->|Compiles via| DSL_PIPE
     BUNDLE ==>|Dispatches Frames| COMM
     COMM <==>|Encodes / Verifies| CODEC
-    PORT <==|USB UART Cable /dev/ttyUSB0|=> ROBOT
+    PORT <==>|USB UART Cable /dev/ttyUSB0| ROBOT
 
     classDef guiStyle fill:#0f766e,stroke:#14b8a6,stroke-width:2px,color:#ffffff;
     classDef srvStyle fill:#0369a1,stroke:#38bdf8,stroke-width:2px,color:#ffffff;
@@ -1043,26 +1043,26 @@ flowchart LR
 sequenceDiagram
     autonumber
     participant Host as botracked (Host PC)
-    participant Link as USB Serial (/dev/ttyUSB0 @ 9600)
+    participant UART as USB Serial (/dev/ttyUSB0 @ 9600)
     participant Bot as trackedbot (ATmega328P)
 
     Note over Host,Bot: 1. Connection & Heartbeat Handshake
-    Host->>Link: [0xAA] CMD_PING [0x04, LEN 0] [CRC 0x83]
-    Link->>Bot: Wire Frame (4 bytes)
-    Bot->>Link: [0xAA] RESP_PONG [0x84, LEN 0] [CRC 0x07]
-    Link->>Host: Pong Received • Link Verified
+    Host->>UART: [0xAA] CMD_PING [0x04, LEN 0] [CRC 0x83]
+    UART->>Bot: Wire Frame (4 bytes)
+    Bot->>UART: [0xAA] RESP_PONG [0x84, LEN 0] [CRC 0x07]
+    UART->>Host: Pong Received • Link Verified
 
     Note over Host,Bot: 2. Periodic Telemetry Loop (2 Hz Polling)
-    Host->>Link: [0xAA] CMD_GET_STATUS [0x10, LEN 0] [CRC 0x6E]
-    Link->>Bot: Status Request Frame
-    Bot->>Link: [0xAA] RESP_STATUS [0x90, LEN 7] [Mode, Motors, PWM, Uptime] [CRC]
-    Link->>Host: GUI Dashboard & Telemetry Cockpit Updated
+    Host->>UART: [0xAA] CMD_GET_STATUS [0x10, LEN 0] [CRC 0x6E]
+    UART->>Bot: Status Request Frame
+    Bot->>UART: [0xAA] RESP_STATUS [0x90, LEN 7] [Mode, Motors, PWM, Uptime] [CRC]
+    UART->>Host: GUI Dashboard & Telemetry Cockpit Updated
 
     Note over Host,Bot: 3. Kinematic Locomotion Execution
-    Host->>Link: [0xAA] CMD_MOTION [0x01, LEN 1, FORWARD] [CRC]
-    Link->>Bot: Forward Command
-    Bot->>Link: [0xAA] RESP_ACK [0x80, LEN 1, 0x01] [CRC]
-    Link->>Host: Acknowledged • L293D Tracks Engaged
+    Host->>UART: [0xAA] CMD_MOTION [0x01, LEN 1, FORWARD] [CRC]
+    UART->>Bot: Forward Command
+    Bot->>UART: [0xAA] RESP_ACK [0x80, LEN 1, 0x01] [CRC]
+    UART->>Host: Acknowledged • L293D Tracks Engaged
 ```
 
 * **Frame Layout**: `[0xAA] [MSG_ID] [LEN] [PAYLOAD...] [CRC8]`
